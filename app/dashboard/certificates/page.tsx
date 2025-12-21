@@ -30,7 +30,11 @@ export default function CertificatesPage() {
                 try {
                     const { data } = await certificateAPI.getMyCertificates()
                     // Handle various response structures: { data: [...] }, { certificates: [...] }, or just [...]
-                    const result = data.data || data.certificates || data
+                    // API response structure: { success: true, data: { certificates: [...] } }
+                    // Handle various potential structures for robustness:
+                    const responseData = data.data || data
+                    const result = Array.isArray(responseData) ? responseData : (responseData.certificates || [])
+
                     if (Array.isArray(result)) {
                         setCertificates(result)
                     } else {
@@ -53,7 +57,11 @@ export default function CertificatesPage() {
     }, [authLoading, isAuthenticated, router, toast])
 
     const handleDownload = (cert: Certificate) => {
-        window.open(certificateAPI.downloadCertificate(cert.certificateId), "_blank")
+        if (cert.pdfUrl) {
+            window.open(cert.pdfUrl, "_blank")
+        } else {
+            window.open(certificateAPI.downloadCertificate(cert.certificateId), "_blank")
+        }
     }
 
     if (authLoading || loading) {

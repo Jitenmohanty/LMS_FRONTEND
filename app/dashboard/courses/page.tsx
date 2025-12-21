@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { PlayCircle, Clock, CheckCircle } from "lucide-react"
+import { progressAPI } from "@/lib/api"
 
 export default function MyCoursesPage() {
   const { getCourses, allCourses } = useCourses()
@@ -18,13 +19,43 @@ export default function MyCoursesPage() {
   }, [getCourses])
 
   useEffect(() => {
-    // Simulate enrolled courses with progress
-    setEnrolledCourses(
-      allCourses.map((course, i) => ({
-        ...course,
-        progress: [100, 65, 40, 85, 20, 0][i % 6],
-      })),
-    )
+    const fetchProgress = async () => {
+      try {
+        const { data } = await progressAPI.getContinueLearning()
+        const progressMap = new Map<string, number>()
+
+        const courses = data.data?.courses || data.courses || []
+        if (Array.isArray(courses)) {
+          courses.forEach((item: any) => {
+            const courseId = item.course?._id || item.course?.id
+            if (courseId) {
+              progressMap.set(courseId, item.progressPercentage || 0)
+            }
+          })
+        }
+
+        // Filter enrolled courses and attach progress
+        const enrolled = allCourses
+          .filter(c => c.isEnrolled)
+          .map(c => ({
+            ...c,
+            progress: progressMap.get(c.id) || 0
+          }))
+
+        setEnrolledCourses(enrolled)
+      } catch (error) {
+        console.error("Failed to fetch progress:", error)
+        // Fallback: show enrolled courses with 0 progress if API fails
+        const enrolled = allCourses
+          .filter(c => c.isEnrolled)
+          .map(c => ({ ...c, progress: 0 }))
+        setEnrolledCourses(enrolled)
+      }
+    }
+
+    if (allCourses.length > 0) {
+      fetchProgress()
+    }
   }, [allCourses])
 
   const inProgressCourses = enrolledCourses.filter((c) => c.progress > 0 && c.progress < 100)

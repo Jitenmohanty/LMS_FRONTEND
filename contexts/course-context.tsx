@@ -38,6 +38,7 @@ export interface Course {
   }
   modules?: Module[]
   isFree?: boolean
+  isEnrolled?: boolean
 }
 
 export interface Bundle {

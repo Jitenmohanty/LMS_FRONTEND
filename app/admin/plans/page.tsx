@@ -36,7 +36,7 @@ interface Plan {
     _id: string
     name: string
     price: number
-    duration: number // in days
+    duration?: number // in days, optional from backend
     billingCycle: string
     description: string
     features: string[]
@@ -144,13 +144,21 @@ export default function PlansPage() {
 
     const openEdit = (plan: Plan) => {
         setEditingPlan(plan)
+
+        // Safely handle features which might be a string or array
+        const featuresAsString = Array.isArray(plan.features)
+            ? plan.features.join(", ")
+            : typeof plan.features === 'string'
+                ? plan.features
+                : "";
+
         setFormData({
             name: plan.name,
             price: plan.price.toString(),
-            duration: plan.duration.toString(),
+            duration: plan.duration?.toString() || "30", // Fallback to 30 if undefined
             billingCycle: plan.billingCycle || "monthly",
             description: plan.description || "",
-            features: plan.features.join(", "),
+            features: featuresAsString,
             isActive: plan.isActive
         })
         setIsDialogOpen(true)
@@ -289,7 +297,7 @@ export default function PlansPage() {
                                     <TableCell className="font-medium">{plan.name}</TableCell>
                                     <TableCell className="capitalize">{plan.billingCycle}</TableCell>
                                     <TableCell>₹{plan.price}</TableCell>
-                                    <TableCell>{plan.duration} days</TableCell>
+                                    <TableCell>{plan.duration ? `${plan.duration} days` : "N/A"}</TableCell>
                                     <TableCell className="max-w-[150px] truncate" title={plan.description}>
                                         {plan.description}
                                     </TableCell>

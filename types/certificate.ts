@@ -3,7 +3,7 @@ export interface Certificate {
   certificateId: string
   issueDate: string
   completedAt: string
-  user: {
+  user: string | {
     _id: string
     name: string
     email?: string
@@ -13,4 +13,5 @@ export interface Certificate {
     title: string
     thumbnail?: string
   }
+  pdfUrl?: string
 }

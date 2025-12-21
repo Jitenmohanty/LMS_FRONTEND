@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useCallback, use } from "react"
+import { useEffect, useState, useCallback, use, useRef } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useCourses, type Video, type Module } from "@/contexts/course-context"
@@ -29,52 +29,71 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
   const [initialTime, setInitialTime] = useState(0)
 
   useEffect(() => {
-    const loadCourse = async () => {
+    const loadCourseAndProgress = async () => {
+      // Fetch course details
       const course = await getCourseDetails(id)
 
       if (course) {
-        // Populate completed videos if the backend returns them
-        const completed = new Set<string>()
-        course.modules?.forEach(m => {
-          m.videos.forEach(v => {
-            if (v.completed) completed.add(v.id || (v as any)._id)
-          })
-        })
-        setCompletedVideos(completed)
-
         if (!authLoading && !canAccessCourse(user, course)) {
           router.replace(`/courses/${id}`)
           return
         }
 
+        let completed = new Set<string>()
+        let lastWatchedVideoId: string | undefined
+        let lastVideoTimestamp = 0
+
+        // Fetch user progress specifically
+        try {
+          const { data } = await progressAPI.getContinueLearning()
+          const continueCourses = data.data?.courses || data.courses || []
+
+          // Find progress for current course
+          // Normalize IDs for comparison
+          const currentCourseProgress = continueCourses.find((c: any) =>
+            (c.course?._id || c.course?.id) === (course._id || course.id)
+          )
+
+          if (currentCourseProgress) {
+            // Set completed videos
+            if (Array.isArray(currentCourseProgress.completedVideos)) {
+              currentCourseProgress.completedVideos.forEach((vId: string) => completed.add(vId))
+            }
+
+            // Set last watched
+            if (currentCourseProgress.lastWatchedVideo) {
+              lastWatchedVideoId = currentCourseProgress.lastWatchedVideo
+            }
+
+            // Set timestamp
+            if (currentCourseProgress.lastVideoTimestamp) {
+              lastVideoTimestamp = currentCourseProgress.lastVideoTimestamp
+            }
+          }
+        } catch (error) {
+          console.error("Failed to load progress:", error)
+        }
+
+        setCompletedVideos(completed)
+        setInitialTime(lastVideoTimestamp)
+
         // Logic to determine active video:
-        // 1. If backend provides lastWatchedVideo, use it.
-        // 2. Else find first uncompleted video.
-        // 3. Fallback to first video.
         let targetVideo: Video | undefined
         let targetModuleId: string | undefined
 
-        // This relies on backend returning lastWatchedVideoId in the course object or similar
-        // For now, let's try to deduce from completed status or if user object has this data
-        // Assuming the updated API response from markProgress might be needed, but we are fetching course details here.
-        // If the 'course' object has a 'userProgress' field (common pattern), use that.
-        const userProgress = (course as any).userProgress
-        if (userProgress?.lastWatchedVideo) {
-          // Find video by ID
+        // 1. Try last watched video from progress
+        if (lastWatchedVideoId) {
           for (const m of course.modules || []) {
-            const v = m.videos.find(v => v.id === userProgress.lastWatchedVideo || (v as any)._id === userProgress.lastWatchedVideo)
+            const v = m.videos.find(v => v.id === lastWatchedVideoId || (v as any)._id === lastWatchedVideoId)
             if (v) {
               targetVideo = v
               targetModuleId = m.id
-              if (userProgress.lastVideoTimestamp) {
-                setInitialTime(userProgress.lastVideoTimestamp)
-              }
               break
             }
           }
         }
 
-        // Fallback: Find first uncompleted
+        // 2. Fallback: Find first uncompleted
         if (!targetVideo) {
           for (const m of course.modules || []) {
             const uncompleted = m.videos.find(v => !completed.has(v.id || (v as any)._id))
@@ -86,23 +105,25 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
           }
         }
 
-        // Fallback: First video
+        // 3. Fallback: First video of course
         if (!targetVideo && course.modules?.[0]?.videos?.[0]) {
           targetVideo = course.modules[0].videos[0]
           targetModuleId = course.modules[0].id
         }
 
+        // Set active state
         if (targetVideo && targetModuleId) {
           setActiveVideo(targetVideo)
           setActiveModuleId(targetModuleId)
-          setExpandedModules(new Set([targetModuleId]))
+          setExpandedModules(new Set([targetModuleId])) // Expand the active module
           const url = await fetchVideoUrl(targetVideo.videoUrl || targetVideo.key || "")
           setVideoUrl(url)
         }
       }
     }
+
     if (!authLoading) {
-      loadCourse()
+      loadCourseAndProgress()
     }
   }, [id, getCourseDetails, fetchVideoUrl, user, authLoading, router])
 
@@ -113,27 +134,43 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
     setVideoUrl(url)
   }
 
+  // Ref to prevent double executions of handleVideoComplete
+  const processingRef = useRef(false)
+
   const handleVideoComplete = useCallback(async () => {
     if (activeVideo && activeCourse) {
-      setCompletedVideos((prev) => new Set([...prev, activeVideo.id]))
-      const response = await markProgress(id, activeVideo.id)
+      if (processingRef.current) return
+      // Optimistic check: if already completed locally, skip
+      if (completedVideos.has(activeVideo.id)) return
 
-      // Check if course is complete
-      // We calculate locally + check response triggered certificate
-      const totalVideos = activeCourse.modules?.reduce((acc, m) => acc + m.videos.length, 0) || 0
-      // We use a functional update for setCompletedVideos, so we need to calculate 'newSize' carefully.
-      // Assuming setCompletedVideos update above has been scheduled, let's look at current set size
-      // Actually, state update isn't immediate.
-      const isAlreadyCompleted = completedVideos.has(activeVideo.id)
-      const currentCompletedCount = completedVideos.size + (isAlreadyCompleted ? 0 : 1)
+      processingRef.current = true
+      try {
+        setCompletedVideos((prev) => new Set([...prev, activeVideo.id]))
+        const response = await markProgress(id, activeVideo.id)
 
-      if (currentCompletedCount >= totalVideos) {
-        setShowCompletionModal(true)
-      } else if (response && response.certificate) {
-        // Fallback: if backend returns certificate object in response (implied completion)
-        setShowCompletionModal(true)
-      } else if (response && response.progress === 100) {
-        setShowCompletionModal(true)
+        // Check if course is complete
+        // We calculate locally + check response triggered certificate
+        const totalVideos = activeCourse.modules?.reduce((acc, m) => acc + m.videos.length, 0) || 0
+        const isAlreadyCompleted = completedVideos.has(activeVideo.id)
+        const currentCompletedCount = completedVideos.size + (isAlreadyCompleted ? 0 : 1)
+
+        if (currentCompletedCount >= totalVideos) {
+          setShowCompletionModal(true)
+        } else if (response && response.data?.certificate || response.certificate) {
+          // Fallback: if backend returns certificate object in response (implied completion)
+          setShowCompletionModal(true)
+        } else if (response && (response.progress === 100 || response.data?.progress?.progressPercentage === 100)) {
+          setShowCompletionModal(true)
+        }
+      } catch (error) {
+        console.error("Failed to mark progress:", error)
+        // If failed, remove from local state so user can try again? 
+        // Or just log it. For now, we log.
+      } finally {
+        // We might want to keep it locked for this videoID specifically, but allowing general unlock is safer for UI
+        // To be safer against strictly double-event firing for SAME video, we could check activeVideo change.
+        // But simply unlocking after async op is usually sufficient for "double click" or "double event" issues.
+        processingRef.current = false
       }
     }
   }, [activeVideo, activeCourse, id, markProgress, completedVideos])
