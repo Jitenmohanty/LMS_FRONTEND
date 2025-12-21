@@ -54,9 +54,9 @@ export default function RegisterPage() {
       await register(name, email, password)
       toast({
         title: "Account created!",
-        description: "Welcome to DevSkill. Let's start learning!",
+        description: "Please check your email for the verification OTP.",
       })
-      router.push("/dashboard")
+      router.push(`/register/verify?email=${encodeURIComponent(email)}`)
     } catch {
       toast({
         title: "Registration failed",

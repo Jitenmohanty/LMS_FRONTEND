@@ -60,6 +60,12 @@ export const authAPI = {
   refresh: () => api.post("/api/auth/refresh"),
   me: () => api.get("/api/auth/me"),
   googleLogin: () => `${API_URL}/api/auth/google`,
+  // OTP & Password Management
+  verifyEmail: (data: { email: string; otp: string }) => api.post("/api/auth/verify-email", data),
+  resendOtp: (data: { email: string }) => api.post("/api/auth/resend-otp", data),
+  forgotPassword: (data: { email: string }) => api.post("/api/auth/forgot-password", data),
+  resetPassword: (data: { email: string; otp: string; newPassword: string }) => api.post("/api/auth/reset-password", data),
+  changePassword: (data: { oldPassword: string; newPassword: string }) => api.post("/api/auth/change-password", data),
 }
 
 // User API

@@ -46,6 +46,12 @@ export default function SettingsPage() {
     newCourses: true,
   })
 
+  const [passwords, setPasswords] = useState({
+    current: "",
+    new: "",
+    confirm: "",
+  })
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
@@ -121,13 +127,29 @@ export default function SettingsPage() {
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (passwords.new !== passwords.confirm) {
+      toast({ title: "Error", description: "New passwords do not match", variant: "destructive" })
+      return
+    }
+
     setIsLoading(true)
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    setIsLoading(false)
-    toast({
-      title: "Password changed",
-      description: "Your password has been changed successfully.",
-    })
+    try {
+      const { authAPI } = await import("@/lib/api")
+      await authAPI.changePassword({
+        oldPassword: passwords.current,
+        newPassword: passwords.new
+      })
+      toast({ title: "Success", description: "Password updated successfully" })
+      setPasswords({ current: "", new: "", confirm: "" })
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.response?.data?.message || "Failed to update password",
+        variant: "destructive"
+      })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -317,15 +339,37 @@ export default function SettingsPage() {
             <form onSubmit={handlePasswordChange} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="currentPassword">Current Password</Label>
-                <Input id="currentPassword" type="password" className="h-12 rounded-xl" required />
+                <Input
+                  id="currentPassword"
+                  type="password"
+                  className="h-12 rounded-xl"
+                  required
+                  value={passwords.current}
+                  onChange={e => setPasswords({ ...passwords, current: e.target.value })}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="newPassword">New Password</Label>
-                <Input id="newPassword" type="password" className="h-12 rounded-xl" required minLength={8} />
+                <Input
+                  id="newPassword"
+                  type="password"
+                  className="h-12 rounded-xl"
+                  required
+                  minLength={8}
+                  value={passwords.new}
+                  onChange={e => setPasswords({ ...passwords, new: e.target.value })}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                <Input id="confirmPassword" type="password" className="h-12 rounded-xl" required />
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  className="h-12 rounded-xl"
+                  required
+                  value={passwords.confirm}
+                  onChange={e => setPasswords({ ...passwords, confirm: e.target.value })}
+                />
               </div>
 
               <Button
