@@ -4,7 +4,7 @@ import type React from "react"
 import { useState } from "react"
 import { ProtectedRoute } from "@/components/protected-route"
 import { DashboardSidebar } from "@/components/dashboard/sidebar"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import { Menu, ChevronLeft, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -46,6 +46,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="left" className="p-0 w-72">
+                  <SheetTitle className="sr-only">Dashboard Menu</SheetTitle>
                   <DashboardSidebar onClose={() => setIsMobileOpen(false)} />
                 </SheetContent>
               </Sheet>

@@ -157,14 +157,14 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="p-6 lg:p-8">
-      <div className="mb-8">
+    <div className="p-4 md:p-6 lg:p-8">
+      <div className="mb-6 md:mb-8">
         <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">Settings</h1>
         <p className="text-gray-600">Manage your account settings and preferences</p>
       </div>
 
       <Tabs defaultValue="profile" className="space-y-6">
-        <TabsList className="bg-gray-100 p-1 rounded-full">
+        <TabsList className="bg-gray-100 p-1 rounded-full w-full md:w-auto grid grid-cols-3 md:inline-flex h-auto">
           <TabsTrigger value="profile" className="rounded-full">
             Profile
           </TabsTrigger>
@@ -178,10 +178,10 @@ export default function SettingsPage() {
 
         {/* Profile Tab */}
         <TabsContent value="profile">
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <div className="bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-gray-100">
             <h2 className="text-lg font-semibold text-gray-900 mb-6">Profile Information</h2>
 
-            <div className="flex items-center gap-6 mb-8">
+            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 mb-8 text-center md:text-left">
               <div className="relative">
                 <div className="w-24 h-24 rounded-full bg-orange-100 flex items-center justify-center overflow-hidden">
                   {avatarPreview || user?.avatar ? (
@@ -259,9 +259,9 @@ export default function SettingsPage() {
 
             {/* Addresses Section */}
             <div className="mt-8">
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Addresses</h3>
-                <Button variant="outline" size="sm" onClick={addAddress} className="flex items-center gap-2">
+                <Button variant="outline" size="sm" onClick={addAddress} className="w-full sm:w-auto flex items-center justify-center gap-2">
                   <Plus className="w-4 h-4" /> Add Address
                 </Button>
               </div>
@@ -326,7 +326,7 @@ export default function SettingsPage() {
               <Button
                 onClick={handleProfileSave}
                 disabled={isLoading}
-                className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-8"
+                className="w-full md:w-auto bg-orange-500 hover:bg-orange-600 text-white rounded-full px-8"
               >
                 {isLoading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
                 Save Changes

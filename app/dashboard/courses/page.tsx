@@ -70,20 +70,22 @@ export default function MyCoursesPage() {
       </div>
 
       <Tabs defaultValue="all" className="space-y-6">
-        <TabsList className="bg-gray-100 p-1 rounded-full">
-          <TabsTrigger value="all" className="rounded-full">
-            All ({enrolledCourses.length})
-          </TabsTrigger>
-          <TabsTrigger value="in-progress" className="rounded-full">
-            In Progress ({inProgressCourses.length})
-          </TabsTrigger>
-          <TabsTrigger value="completed" className="rounded-full">
-            Completed ({completedCourses.length})
-          </TabsTrigger>
-          <TabsTrigger value="not-started" className="rounded-full">
-            Not Started ({notStartedCourses.length})
-          </TabsTrigger>
-        </TabsList>
+        <div className="overflow-x-auto pb-2 -mx-6 px-6 lg:overflow-visible lg:pb-0 lg:mx-0 lg:px-0 scrollbar-hide">
+          <TabsList className="bg-gray-100 p-1 rounded-full w-max flex h-auto">
+            <TabsTrigger value="all" className="rounded-full px-4 py-2">
+              All ({enrolledCourses.length})
+            </TabsTrigger>
+            <TabsTrigger value="in-progress" className="rounded-full px-4 py-2">
+              In Progress ({inProgressCourses.length})
+            </TabsTrigger>
+            <TabsTrigger value="completed" className="rounded-full px-4 py-2">
+              Completed ({completedCourses.length})
+            </TabsTrigger>
+            <TabsTrigger value="not-started" className="rounded-full px-4 py-2">
+              Not Started ({notStartedCourses.length})
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="all" className="space-y-4">
           <CourseList courses={enrolledCourses} />
@@ -118,13 +120,13 @@ function CourseList({ courses }: { courses: (Course & { progress: number })[] })
     <div className="grid md:grid-cols-2 gap-4">
       {courses.map((course) => (
         <div key={course.id} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-4">
             <Image
               src={course.thumbnail || "/placeholder.svg"}
               alt={course.title}
               width={120}
               height={80}
-              className="rounded-xl object-cover"
+              className="rounded-xl w-full sm:w-[120px] h-40 sm:h-20 object-cover"
             />
             <div className="flex-1 min-w-0">
               <h3 className="font-semibold text-gray-900 truncate mb-1">{course.title}</h3>

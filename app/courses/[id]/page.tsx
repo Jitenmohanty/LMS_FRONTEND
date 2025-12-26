@@ -299,18 +299,19 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
                 {/* Instructor */}
                 <div className="bg-card rounded-2xl p-6 border">
                   <h2 className="text-xl font-bold mb-4">Instructor</h2>
-                  <div className="flex items-start gap-4">
+                  <div className="flex flex-col md:flex-row gap-6 items-center md:items-start text-center md:text-left">
                     <Image
                       src={course.instructor.avatar || "/placeholder.svg"}
                       alt={course.instructor.name}
                       width={80}
                       height={80}
-                      className="rounded-full"
+                      className="rounded-full w-20 h-20 md:w-16 md:h-16 object-cover"
                     />
-                    <div>
-                      <h3 className="font-semibold text-lg">{course.instructor.name}</h3>
-                      <p className="text-muted-foreground mb-3">Senior Instructor at DevSkill</p>
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg mb-1">{course.instructor.name}</h3>
+                      <p className="text-muted-foreground text-sm mb-4">Senior Instructor at DevSkill</p>
+
+                      <div className="flex flex-wrap justify-center md:justify-start items-center gap-4 text-sm text-muted-foreground mb-4">
                         <span className="flex items-center gap-1">
                           <Star className="w-4 h-4 text-yellow-400" />
                           4.8 Rating
@@ -324,7 +325,8 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
                           15 Courses
                         </span>
                       </div>
-                      <p className="text-muted-foreground mt-3">
+
+                      <p className="text-muted-foreground text-sm leading-relaxed">
                         Passionate educator with 10+ years of industry experience. Committed to helping students achieve
                         your goals.
                       </p>
