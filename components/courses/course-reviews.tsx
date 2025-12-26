@@ -66,6 +66,15 @@ export function CourseReviews({ courseId }: { courseId: string }) {
             return
         }
 
+        if (comment.length < 5) {
+            toast({
+                title: "Review too short",
+                description: "Review comment must be at least 5 characters long.",
+                variant: "destructive",
+            })
+            return
+        }
+
         setSubmitting(true)
         try {
             await reviewAPI.addReview({ courseId, rating, comment })
@@ -83,10 +92,10 @@ export function CourseReviews({ courseId }: { courseId: string }) {
                     ? data.data
                     : data.data?.reviews || data.reviews || []
             setReviews(reviewsData)
-        } catch (error) {
+        } catch (error: any) {
             toast({
                 title: "Error",
-                description: "Failed to submit review. Please try again.",
+                description: error?.response?.data?.message || "Failed to submit review. Please try again.",
                 variant: "destructive",
             })
         } finally {
@@ -99,37 +108,50 @@ export function CourseReviews({ courseId }: { courseId: string }) {
             <h2 className="text-2xl font-bold">Student Reviews</h2>
 
             {/* Add Review Form */}
+            {/* Add Review Form */}
             {isAuthenticated ? (
-                <div className="bg-muted/30 p-6 rounded-xl border space-y-4">
-                    <h3 className="font-semibold text-lg">Write a Review</h3>
-                    <div className="space-y-4">
-                        <div className="flex items-center gap-1">
-                            {[1, 2, 3, 4, 5].map((star) => (
-                                <button
-                                    key={star}
-                                    type="button"
-                                    onClick={() => setRating(star)}
-                                    className="focus:outline-none transition-transform hover:scale-110"
-                                >
-                                    <Star
-                                        className={`h-6 w-6 ${star <= rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300 dark:text-gray-600"
-                                            }`}
-                                    />
-                                </button>
-                            ))}
-                            <span className="ml-2 text-sm text-muted-foreground">{rating > 0 ? `${rating} stars` : "Select rating"}</span>
+                // Safe check for access: Admin or Is Enrolled/Purchased
+                // Assuming user has 'purchasedCourses' or similar array, or use canAccessCourse helper logic if available
+                // For now, check purchase list
+                (user?.role === 'admin' || user?.purchasedCourses?.includes(courseId)) ? (
+                    <div className="bg-muted/30 p-6 rounded-xl border space-y-4">
+                        <h3 className="font-semibold text-lg">Write a Review</h3>
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-1">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                    <button
+                                        key={star}
+                                        type="button"
+                                        onClick={() => setRating(star)}
+                                        className="focus:outline-none transition-transform hover:scale-110"
+                                    >
+                                        <Star
+                                            className={`h-6 w-6 ${star <= rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300 dark:text-gray-600"
+                                                }`}
+                                        />
+                                    </button>
+                                ))}
+                                <span className="ml-2 text-sm text-muted-foreground">{rating > 0 ? `${rating} stars` : "Select rating"}</span>
+                            </div>
+                            <Textarea
+                                placeholder="Share your experience with this course..."
+                                value={comment}
+                                onChange={(e) => setComment(e.target.value)}
+                                className="resize-none min-h-[100px]"
+                            />
+                            <Button onClick={handleSubmit} disabled={submitting || rating === 0}>
+                                {submitting ? "Submitting..." : "Post Review"}
+                            </Button>
                         </div>
-                        <Textarea
-                            placeholder="Share your experience with this course..."
-                            value={comment}
-                            onChange={(e) => setComment(e.target.value)}
-                            className="resize-none min-h-[100px]"
-                        />
-                        <Button onClick={handleSubmit} disabled={submitting || rating === 0}>
-                            {submitting ? "Submitting..." : "Post Review"}
+                    </div>
+                ) : (
+                    <div className="bg-muted/30 p-6 rounded-xl border text-center">
+                        <p className="text-muted-foreground mb-4">You must enroll in this course to leave a review.</p>
+                        <Button variant="outline" asChild>
+                            <a href={`/courses/${courseId}`}>Go to Course</a>
                         </Button>
                     </div>
-                </div>
+                )
             ) : (
                 <div className="bg-muted/30 p-6 rounded-xl border text-center">
                     <p className="text-muted-foreground mb-4">Please log in to leave a review.</p>
