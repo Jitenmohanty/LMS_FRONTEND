@@ -119,13 +119,20 @@ export function Footer() {
 
         {/* Payment Methods */}
         <div className="mt-12 pt-8 border-t border-gray-800">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-gray-400 text-sm">We Accept Payment Gateway</p>
-            <div className="flex items-center gap-4">
-              <div className="px-4 py-2 bg-gray-800 rounded-lg text-sm font-medium">VISA</div>
-              <div className="px-4 py-2 bg-gray-800 rounded-lg text-sm font-medium">MasterCard</div>
-              <div className="px-4 py-2 bg-gray-800 rounded-lg text-sm font-medium">PayPal</div>
-              <div className="px-4 py-2 bg-gray-800 rounded-lg text-sm font-medium">Razorpay</div>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <p className="text-gray-400 text-sm text-center md:text-left">
+              Secure Payment with
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              {/* Using styled text badges as placeholders for logos, with hover effects */}
+              <div className="px-4 py-2 bg-white text-gray-900 rounded-md text-xs font-extrabold tracking-wider shadow-sm hover:scale-105 transition-transform cursor-default select-none">VISA</div>
+              <div className="px-4 py-2 bg-white text-gray-900 rounded-md text-xs font-extrabold tracking-wider shadow-sm hover:scale-105 transition-transform cursor-default select-none flex items-center gap-1">
+                <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
+                MasterCard
+              </div>
+              <div className="px-4 py-2 bg-blue-600 text-white rounded-md text-xs font-bold shadow-sm hover:scale-105 transition-transform cursor-default select-none">PayPal</div>
+              <div className="px-4 py-2 bg-[#0C2D48] text-white rounded-md text-xs font-bold shadow-sm hover:scale-105 transition-transform cursor-default select-none">Razorpay</div>
             </div>
           </div>
         </div>

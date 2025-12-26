@@ -26,12 +26,9 @@ export function Header() {
       children: [
         { name: "About Us", href: "/about" },
         { name: "Contact", href: "/contact" },
-        { name: "FAQ", href: "/faq" },
         { name: "Pricing", href: "/pricing" },
       ],
     },
-    { name: "Mentors", href: "/mentors" },
-    { name: "Blog", href: "/blog" },
   ]
 
   return (
@@ -143,18 +140,20 @@ export function Header() {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-100">
-            <div className="flex flex-col gap-4">
+          <div className="md:hidden absolute top-16 left-0 w-full bg-white border-b border-gray-100 shadow-xl z-50 animate-in slide-in-from-top-2 duration-200">
+            <div className="flex flex-col p-4 gap-2">
               {navigation.map((item) =>
                 item.children ? (
-                  <div key={item.name} className="space-y-2">
-                    <span className="font-medium text-gray-900">{item.name}</span>
-                    <div className="pl-4 space-y-2">
+                  <div key={item.name} className="space-y-1">
+                    <div className="font-semibold text-gray-900 px-4 py-2 bg-gray-50/50 rounded-md">
+                      {item.name}
+                    </div>
+                    <div className="pl-4 space-y-1 border-l-2 border-orange-100 ml-4">
                       {item.children.map((child) => (
                         <Link
                           key={child.name}
                           href={child.href}
-                          className="block text-gray-600 hover:text-gray-900"
+                          className="block px-4 py-2 text-gray-600 hover:text-orange-600 hover:bg-orange-50 rounded-md transition-colors"
                           onClick={() => setMobileMenuOpen(false)}
                         >
                           {child.name}
@@ -166,36 +165,45 @@ export function Header() {
                   <Link
                     key={item.name}
                     href={item.href}
-                    className="text-gray-600 hover:text-gray-900 font-medium"
+                    className="block px-4 py-2 font-semibold text-gray-700 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {item.name}
                   </Link>
                 ),
               )}
-              <div className="flex flex-col gap-2 pt-4 border-t border-gray-100">
+
+              <div className="h-px bg-gray-100 my-2" />
+
+              <div className="flex flex-col gap-3 px-2">
                 {isAuthenticated ? (
                   <>
-                    <Link href="/dashboard">
-                      <Button variant="outline" className="w-full bg-transparent">
+                    <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
+                      <Button variant="outline" className="w-full justify-start border-gray-200 hover:bg-gray-50 hover:text-gray-900">
+                        <BookOpen className="w-4 h-4 mr-2 text-orange-500" />
                         Dashboard
                       </Button>
                     </Link>
-                    <Button variant="destructive" onClick={logout} className="w-full">
+                    <Button
+                      variant="destructive"
+                      onClick={() => { logout(); setMobileMenuOpen(false); }}
+                      className="w-full justify-start bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 border border-red-100 shadow-none"
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
                       Logout
                     </Button>
                   </>
                 ) : (
-                  <>
-                    <Link href="/login">
-                      <Button variant="outline" className="w-full bg-transparent">
+                  <div className="grid grid-cols-2 gap-3">
+                    <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                      <Button variant="outline" className="w-full border-gray-200 hover:bg-gray-50 text-gray-700">
                         Sign In
                       </Button>
                     </Link>
-                    <Link href="/register">
-                      <Button className="w-full bg-orange-500 hover:bg-orange-600">Join Us</Button>
+                    <Link href="/register" onClick={() => setMobileMenuOpen(false)}>
+                      <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white shadow-md shadow-orange-200">Join Us</Button>
                     </Link>
-                  </>
+                  </div>
                 )}
               </div>
             </div>
