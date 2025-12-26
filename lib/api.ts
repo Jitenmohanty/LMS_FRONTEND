@@ -71,13 +71,14 @@ export const authAPI = {
 // User API
 export const userAPI = {
   updateProfile: (data: FormData) =>
-    api.put("/api/users/profile", data, {
+    api.put("/api/user/profile", data, {
       headers: { "Content-Type": "multipart/form-data" },
     }),
   getDashboardStats: () => api.get("/api/users/dashboard"),
   getWishlist: () => api.get("/api/users/wishlist"),
   addToWishlist: (courseId: string) => api.post(`/api/users/wishlist/${courseId}`),
   removeFromWishlist: (courseId: string) => api.delete(`/api/users/wishlist/${courseId}`),
+  getMyCourses: (userId: string) => api.get("/api/user/courses", { params: { userId } }),
 }
 
 // Course API
@@ -90,19 +91,23 @@ export const courseAPI = {
   addModule: (id: string, data: any) => api.post(`/api/courses/${id}/modules`, data),
   addVideo: (courseId: string, moduleId: string, data: any) => api.post(`/api/courses/${courseId}/modules/${moduleId}/videos`, data),
   search: (query: string) => api.get(`/api/search?query=${query}`),
+  enroll: (courseId: string, data: { userId: string; paymentId?: string }) => api.post(`/api/courses/${courseId}/enroll`, data),
+}
+
+// Category API
+export const categoryAPI = {
+  getAll: () => api.get("/api/categories"),
 }
 
 // Video API
 export const videoAPI = {
-  getStreamUrl: (key: string) => api.get(`/api/video/stream/${key}`),
+  getStreamUrl: (lessonId: string, userId?: string) => api.get("/api/video/stream", { params: { lessonId, userId } }),
 }
 
 // Progress API
 export const progressAPI = {
-  markProgress: (courseId: string, videoId: string) => api.post(`/api/progress/${courseId}/${videoId}`),
-  getContinueLearning: () => api.get("/api/progress/continue-learning"),
-  sendHeartbeat: (courseId: string, videoId: string, timestamp: number) =>
-    api.post(`/api/progress/heartbeat/${courseId}/${videoId}`, { timestamp }),
+  getProgress: (courseId: string, userId: string) => api.get(`/api/courses/${courseId}/progress`, { params: { userId } }),
+  updateProgress: (courseId: string, data: { userId: string; lessonId: string; completed: boolean }) => api.post(`/api/courses/${courseId}/progress`, data),
 }
 
 // Bundle API
