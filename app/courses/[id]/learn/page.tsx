@@ -12,10 +12,12 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { CheckCircle, PlayCircle, ChevronDown, ChevronUp, ArrowLeft } from "lucide-react"
 
 import { CourseCompletionModal } from "@/components/courses/course-completion-modal"
+import { useToast } from "@/hooks/use-toast"
 
 export default function LearnPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const router = useRouter()
+  const { toast } = useToast()
   const { user, isLoading: authLoading } = useAuth()
   const { getCourseDetails, activeCourse, fetchVideoUrl, markProgress, isLoading: courseLoading } = useCourses()
   const isLoading = authLoading || courseLoading
@@ -35,6 +37,17 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
 
       if (course) {
         if (!authLoading && !canAccessCourse(user, course)) {
+          router.replace(`/courses/${id}`)
+          return
+        }
+
+        const totalVideos = course.modules?.reduce((acc, m) => acc + m.videos.length, 0) || 0
+        if (totalVideos === 0) {
+          toast({
+            title: "No videos added yet",
+            description: "Please check back later.",
+            variant: "default",
+          })
           router.replace(`/courses/${id}`)
           return
         }

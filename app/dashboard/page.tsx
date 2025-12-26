@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 import { useAuth } from "@/contexts/auth-context"
 import { useCourses, type Course } from "@/contexts/course-context"
 import { userAPI, progressAPI } from "@/lib/api"
@@ -11,9 +12,12 @@ import { Progress } from "@/components/ui/progress"
 import { BookOpen, Clock, Trophy, TrendingUp, PlayCircle, ArrowRight, Calendar, Loader2 } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
 import { ContinueLearningCourse } from "@/types/progress"
+import { useToast } from "@/hooks/use-toast"
 
 export default function DashboardPage() {
   const { user } = useAuth()
+  const router = useRouter()
+  const { toast } = useToast()
   const { getCourses, allCourses } = useCourses()
   const [continueLearningCourses, setContinueLearningCourses] = useState<ContinueLearningCourse[]>([])
   const [loading, setLoading] = useState(true)
@@ -30,6 +34,8 @@ export default function DashboardPage() {
       setLoading(true)
       try {
         await getCourses()
+
+        // Wait on both stats and continue learning
         const [statsResponse, continueResponse] = await Promise.all([
           userAPI.getDashboardStats(),
           progressAPI.getContinueLearning()
@@ -39,18 +45,24 @@ export default function DashboardPage() {
           setStatsData(statsResponse.data.data)
         }
 
+        // Handle various response data shapes (nested 'course' object vs flat, nested 'data' vs direct)
         const coursesData = continueResponse.data.data?.courses || continueResponse.data.courses || []
         if (Array.isArray(coursesData)) {
-          const mappedCourses: ContinueLearningCourse[] = coursesData.map((item: any) => ({
-            courseId: item.course?._id || item.course?.id,
-            title: item.course?.title || "Untitled Course",
-            thumbnail: item.course?.thumbnail || "",
-            progressPercentage: item.progressPercentage || 0,
-            lastWatchedVideo: item.lastWatchedVideo,
-            lastVideoTimestamp: item.lastVideoTimestamp,
-            totalVideos: item.totalVideos || 0,
-            completedVideos: Array.isArray(item.completedVideos) ? item.completedVideos.length : (item.completedVideos || 0)
-          })).filter(c => c.courseId)
+          const mappedCourses: ContinueLearningCourse[] = coursesData.map((item: any) => {
+            // If item has a 'course' property, use it (nested). Otherwise assume item IS the course (flat).
+            const courseObj = item.course || item
+            return {
+              courseId: courseObj._id || courseObj.id,
+              title: courseObj.title || "Untitled Course",
+              thumbnail: courseObj.thumbnail || "",
+              // Handle different progress field names
+              progressPercentage: item.progressPercentage || item.progress || 0,
+              lastWatchedVideo: item.lastWatchedVideo,
+              lastVideoTimestamp: item.lastVideoTimestamp,
+              totalVideos: item.totalVideos || 0,
+              completedVideos: Array.isArray(item.completedVideos) ? item.completedVideos.length : (item.completedVideos || 0)
+            }
+          }).filter(c => c.courseId)
           setContinueLearningCourses(mappedCourses)
         }
       } catch (error) {
@@ -59,14 +71,30 @@ export default function DashboardPage() {
         setLoading(false)
       }
     }
-    fetchData()
-  }, [getCourses])
+
+    if (user) {
+      fetchData()
+    }
+  }, [getCourses, user])
+
   const stats = [
     { label: "Enrolled Courses", value: statsData.enrolledCourses, icon: BookOpen, color: "bg-blue-500" },
     { label: "Hours Learned", value: statsData.hoursLearned, icon: Clock, color: "bg-green-500" },
     { label: "Certificates", value: statsData.certificates, icon: Trophy, color: "bg-yellow-500" },
     { label: "Completion Rate", value: `${Math.round(statsData.completionRate)}%`, icon: TrendingUp, color: "bg-purple-500" },
   ]
+
+  const handleContinueCourse = (courseId: string, totalVideos: number) => {
+    if (totalVideos === 0) {
+      toast({
+        title: "No videos added yet",
+        description: "Please check back later.",
+        variant: "default",
+      })
+    } else {
+      router.push(`/courses/${courseId}/learn`)
+    }
+  }
 
   if (loading) {
     return (
@@ -135,12 +163,14 @@ export default function DashboardPage() {
                         <span className="text-sm font-medium text-gray-600">{course.progressPercentage}%</span>
                       </div>
                     </div>
-                    <Link href={`/courses/${course.courseId}/learn`}>
-                      <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white rounded-full">
-                        <PlayCircle className="w-4 h-4 mr-1" />
-                        Continue
-                      </Button>
-                    </Link>
+                    <Button
+                      size="sm"
+                      className="bg-orange-500 hover:bg-orange-600 text-white rounded-full"
+                      onClick={() => handleContinueCourse(course.courseId, course.totalVideos)}
+                    >
+                      <PlayCircle className="w-4 h-4 mr-1" />
+                      Continue
+                    </Button>
                   </div>
                 ))}
               </div>

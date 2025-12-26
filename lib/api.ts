@@ -119,7 +119,7 @@ export const authAPI = {
 // User API
 export const userAPI = {
   updateProfile: (data: FormData) =>
-    api.put("/api/user/profile", data, {
+    api.put("/api/users/profile", data, {
       headers: { "Content-Type": "multipart/form-data" },
     }),
   getDashboardStats: () => api.get("/api/users/dashboard"),
@@ -154,8 +154,10 @@ export const videoAPI = {
 
 // Progress API
 export const progressAPI = {
-  getProgress: (courseId: string, userId: string) => api.get(`/api/courses/${courseId}/progress`, { params: { userId } }),
-  updateProgress: (courseId: string, data: { userId: string; lessonId: string; completed: boolean }) => api.post(`/api/courses/${courseId}/progress`, data),
+  markProgress: (courseId: string, videoId: string) => api.post(`/api/progress/${courseId}/${videoId}`),
+  getContinueLearning: () => api.get("/api/progress/continue-learning"),
+  sendHeartbeat: (courseId: string, videoId: string, timestamp: number) =>
+    api.post(`/api/progress/heartbeat/${courseId}/${videoId}`, { timestamp }),
 }
 
 // Bundle API

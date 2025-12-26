@@ -371,10 +371,22 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
                     </div>
 
                     {isEnrolled ? (
-                      <Button asChild className="w-full h-12 text-lg rounded-xl">
-                        <Link href={`/courses/${id}/learn`}>
-                          Start Learning
-                        </Link>
+                      <Button
+                        onClick={() => {
+                          const hasContent = course.modules?.some(m => m.videos?.length > 0)
+                          if (!hasContent) {
+                            toast({
+                              title: "No videos added yet",
+                              description: "Please check back later.",
+                              variant: "default",
+                            })
+                            return
+                          }
+                          router.push(`/courses/${id}/learn`)
+                        }}
+                        className="w-full h-12 text-lg rounded-xl"
+                      >
+                        Start Learning
                       </Button>
                     ) : (
                       <Button onClick={handleEnroll} disabled={isProcessing} className="w-full h-12 text-lg rounded-xl">
