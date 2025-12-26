@@ -42,17 +42,17 @@ export default function AboutPage() {
       <Header />
 
       {/* Hero Section */}
-      <section className="py-16 lg:py-24 bg-gradient-to-br from-primary/5 to-accent/5">
-        <div className="container">
+      <section className="py-12 lg:py-24 bg-gradient-to-br from-primary/5 to-accent/5">
+        <div className="container px-4 md:px-6">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl lg:text-5xl font-bold mb-6">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 lg:mb-6">
               Empowering Learners <span className="text-primary">Worldwide</span>
             </h1>
-            <p className="text-lg text-muted-foreground mb-8">
+            <p className="text-base sm:text-lg text-muted-foreground mb-6 lg:mb-8 max-w-2xl mx-auto">
               We are passionate about empowering learners worldwide with high-quality, accessible and engaging
               education. Our mission is to offer a diverse range of courses that cater to every learning need.
             </p>
-            <Button size="lg" asChild>
+            <Button size="lg" className="w-full sm:w-auto" asChild>
               <Link href="/courses">
                 Explore Courses
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -64,7 +64,7 @@ export default function AboutPage() {
 
       {/* Stats */}
       <section className="py-12 border-b">
-        <div className="container">
+        <div className="container px-4 md:px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat) => (
               <div key={stat.label} className="text-center">
@@ -80,37 +80,37 @@ export default function AboutPage() {
       </section>
 
       {/* Story Section */}
-      <section className="py-16 lg:py-24">
-        <div className="container">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <span className="inline-block rounded-full bg-primary/10 px-4 py-1 text-sm font-medium text-primary mb-4">
+      <section className="py-12 lg:py-24">
+        <div className="container px-4 md:px-6">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <div className="order-2 lg:order-1">
+              <div className="inline-block rounded-full bg-primary/10 px-4 py-1 text-sm font-medium text-primary mb-4">
                 Our Story
-              </span>
-              <h2 className="text-3xl lg:text-4xl font-bold mb-6">
+              </div>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 lg:mb-6">
                 Growth Skill With DevSkill Academy & Accelerate to your Better Future
               </h2>
-              <p className="text-muted-foreground mb-6">
+              <p className="text-muted-foreground mb-4 lg:mb-6 text-sm sm:text-base">
                 DevSkill Academy started with a simple mission: to make quality education accessible to everyone,
                 everywhere. Founded by passionate educators and tech enthusiasts, we have grown from a small startup to
                 a global learning platform.
               </p>
-              <p className="text-muted-foreground mb-6">
+              <p className="text-muted-foreground mb-6 text-sm sm:text-base">
                 Our dynamic educational platform offers you the tools and resources to propel yourself towards a
                 brighter future. With expert guidance and a supportive community, we help you achieve your learning
                 goals.
               </p>
-              <Button variant="outline" asChild>
+              <Button variant="outline" className="w-full sm:w-auto" asChild>
                 <Link href="/courses">Browse Courses</Link>
               </Button>
             </div>
-            <div className="relative">
+            <div className="relative order-1 lg:order-2 mb-8 lg:mb-0">
               <Image
                 src="/diverse-students-learning-online-education.jpg"
                 alt="Students learning"
                 width={600}
                 height={500}
-                className="rounded-2xl"
+                className="rounded-2xl w-full h-auto object-cover shadow-lg"
               />
             </div>
           </div>
@@ -119,7 +119,7 @@ export default function AboutPage() {
 
       {/* Team Section */}
       <section className="py-16 lg:py-24 bg-muted/30">
-        <div className="container">
+        <div className="container px-4 md:px-6">
           <div className="text-center mb-12">
             <span className="inline-block rounded-full bg-primary/10 px-4 py-1 text-sm font-medium text-primary mb-4">
               Our Team
@@ -152,7 +152,7 @@ export default function AboutPage() {
 
       {/* CTA */}
       <section className="py-16 lg:py-24">
-        <div className="container">
+        <div className="container px-4 md:px-6">
           <Card className="bg-primary text-primary-foreground">
             <CardContent className="p-8 lg:p-12 text-center">
               <h2 className="text-3xl font-bold mb-4">Ready to Start Your Learning Journey?</h2>

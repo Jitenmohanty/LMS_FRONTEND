@@ -51,14 +51,14 @@ export default function ContactPage() {
     <div className="min-h-screen bg-background">
       <Header />
 
-      <section className="py-16 lg:py-24">
-        <div className="container">
-          <div className="text-center mb-12">
+      <section className="py-12 lg:py-24">
+        <div className="container px-4 md:px-6">
+          <div className="text-center mb-8 lg:mb-12">
             <span className="inline-block rounded-full bg-primary/10 px-4 py-1 text-sm font-medium text-primary mb-4">
               Contact Us
             </span>
-            <h1 className="text-4xl lg:text-5xl font-bold mb-4">Get in Touch</h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">Get in Touch</h1>
+            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
               Have questions? We would love to hear from you. Send us a message and we will respond as soon as possible.
             </p>
           </div>
