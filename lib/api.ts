@@ -224,4 +224,10 @@ export const uploadAPI = {
   getVideoStreamUrl: (key: string) => api.get(`/api/upload/video/stream/${key}`),
 }
 
+// Contact API
+export const contactAPI = {
+  sendMessage: (data: { firstName: string; lastName: string; email: string; subject: string; message: string }) => 
+    api.post("/api/contact", data),
+}
+
 export default api

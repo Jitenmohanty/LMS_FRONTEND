@@ -123,6 +123,16 @@ export const createOrderSchema = z.object({
   productId: z.string().optional(), // courseId, bundleId, planId
 })
 
+// --- Contact ---
+
+export const contactFormSchema = z.object({
+  firstName: z.string().min(1, 'First name is required'),
+  lastName: z.string().min(1, 'Last name is required'),
+  email: z.string().email('Invalid email address'),
+  subject: z.string().min(1, 'Subject is required'),
+  message: z.string().min(10, 'Message must be at least 10 characters')
+});
+
 export type RegisterInput = z.infer<typeof registerSchema>
 export type LoginInput = z.infer<typeof loginSchema>
 export type UserProfileInput = z.infer<typeof userProfileSchema>
@@ -132,3 +142,4 @@ export type VideoInput = z.infer<typeof videoSchema>
 export type ReviewInput = z.infer<typeof reviewSchema>
 export type BundleInput = z.infer<typeof bundleSchema>
 export type PlanInput = z.infer<typeof planSchema>
+export type ContactFormInput = z.infer<typeof contactFormSchema>
