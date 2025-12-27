@@ -13,6 +13,7 @@ import { BookOpen, Clock, Trophy, TrendingUp, PlayCircle, ArrowRight, Calendar, 
 import { formatDistanceToNow } from "date-fns"
 import { ContinueLearningCourse } from "@/types/progress"
 import { useToast } from "@/hooks/use-toast"
+import { DashboardSkeleton } from "@/components/skeletons/dashboard-skeleton"
 
 export default function DashboardPage() {
   const { user } = useAuth()
@@ -97,11 +98,7 @@ export default function DashboardPage() {
   }
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
-      </div>
-    )
+    return <DashboardSkeleton />
   }
 
   return (

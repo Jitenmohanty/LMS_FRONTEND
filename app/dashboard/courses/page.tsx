@@ -10,9 +10,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { PlayCircle, Clock, CheckCircle } from "lucide-react"
 import { progressAPI } from "@/lib/api"
 
+import { DashboardCourseSkeleton } from "@/components/skeletons/dashboard-course-skeleton"
+
 export default function MyCoursesPage() {
   const { getCourses, allCourses } = useCourses()
   const [enrolledCourses, setEnrolledCourses] = useState<(Course & { progress: number })[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     getCourses()
@@ -20,6 +23,10 @@ export default function MyCoursesPage() {
 
   useEffect(() => {
     const fetchProgress = async () => {
+      // If we have courses, we are loading progress. If no courses, we might still be loading initial fetch? 
+      // Actually getCourses might differ. Let's set loading true at start.
+      // But we can depend on allCourses changing.
+
       try {
         const { data } = await progressAPI.getContinueLearning()
         const progressMap = new Map<string, number>()
@@ -50,13 +57,24 @@ export default function MyCoursesPage() {
           .filter(c => c.isEnrolled)
           .map(c => ({ ...c, progress: 0 }))
         setEnrolledCourses(enrolled)
+      } finally {
+        setIsLoading(false)
       }
     }
 
     if (allCourses.length > 0) {
       fetchProgress()
+    } else {
+      // If allCourses is empty, we might be loading or user has no courses. 
+      // We can check if getCourses is done by checking a loading flag from context, 
+      // but here we just simulate. 
+      // For now let's just turn off loading after a short timeout if no courses found to avoid infinite load
+      const timer = setTimeout(() => setIsLoading(false), 1000)
+      return () => clearTimeout(timer)
     }
   }, [allCourses])
+
+  if (isLoading) return <DashboardCourseSkeleton />
 
   const inProgressCourses = enrolledCourses.filter((c) => c.progress > 0 && c.progress < 100)
   const completedCourses = enrolledCourses.filter((c) => c.progress === 100)
