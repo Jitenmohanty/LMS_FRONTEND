@@ -4,6 +4,7 @@ import { useEffect, useState, use } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { userAPI } from "@/lib/api"
 import Header from "@/components/layout/header"
 import Footer from "@/components/layout/footer"
 import { useCourses, type Course } from "@/contexts/course-context"
@@ -39,6 +40,69 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
   const { isAuthenticated, user, reloadUser } = useAuth()
   const { createOrder, openRazorpayCheckout, isProcessing } = usePayment()
   const [course, setCourse] = useState<Course | null>(null)
+  const [isWishlisted, setIsWishlisted] = useState(false)
+  const [wishlistLoading, setWishlistLoading] = useState(false)
+
+  // Check if course is in wishlist on load
+  useEffect(() => {
+    const checkWishlistStatus = async () => {
+      if (isAuthenticated && user) {
+        try {
+          // This assumes we might need to fetch the wishlist to check status, 
+          // or we can rely on user details if they contained wishlist IDs.
+          // For now, let's fetch the wishlist to be sure or check a specific endpoint if available.
+          // Since we don't have a "check wishlist" endpoint, we get all wishlist items.
+          const { data } = await userAPI.getWishlist()
+          const wishlist = data.data?.wishlist || data.wishlist || []
+          // Check if current course id is in wishlist
+          // Adjust based on whether wishlist returns full objects or IDs
+          const inWishlist = wishlist.some((item: any) =>
+            (typeof item === 'string' && item === id) ||
+            (item._id === id) ||
+            (item.course === id) ||
+            (item.course?._id === id)
+          )
+          setIsWishlisted(inWishlist)
+        } catch (error) {
+          console.error("Failed to check wishlist status", error)
+        }
+      }
+    }
+    checkWishlistStatus()
+  }, [id, isAuthenticated, user])
+
+  const toggleWishlist = async () => {
+    if (!isAuthenticated) {
+      toast({
+        title: "Authentication required",
+        description: "Please log in to add to wishlist.",
+        variant: "default",
+      })
+      return
+    }
+
+    setWishlistLoading(true)
+    try {
+      if (isWishlisted) {
+        await userAPI.removeFromWishlist(id)
+        setIsWishlisted(false)
+        toast({ title: "Removed from Wishlist" })
+      } else {
+        await userAPI.addToWishlist(id)
+        setIsWishlisted(true)
+        toast({ title: "Added to Wishlist" })
+      }
+    } catch (error) {
+      console.error("Wishlist action failed", error)
+      toast({
+        title: "Error",
+        description: "Failed to update wishlist",
+        variant: "destructive"
+      })
+    } finally {
+      setWishlistLoading(false)
+    }
+  }
 
   useEffect(() => {
     const loadCourse = async () => {
@@ -426,9 +490,13 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
                         <Share2 className="w-5 h-5" />
                         Share
                       </button>
-                      <button className="flex items-center gap-2 text-muted-foreground hover:text-red-500">
-                        <Heart className="w-5 h-5" />
-                        Wishlist
+                      <button
+                        onClick={toggleWishlist}
+                        disabled={wishlistLoading}
+                        className={`flex items-center gap-2 text-muted-foreground hover:text-red-500 transition-colors ${isWishlisted ? "text-red-500 font-medium" : ""}`}
+                      >
+                        <Heart className={`w-5 h-5 ${isWishlisted ? "fill-current" : ""}`} />
+                        {isWishlisted ? "Wishlisted" : "Wishlist"}
                       </button>
                     </div>
                   </div>
