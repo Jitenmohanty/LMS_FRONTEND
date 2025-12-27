@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { courseAPI, uploadAPI } from "@/lib/api"
+import { CourseModulesSkeleton } from "@/components/skeletons/course-modules-skeleton"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -113,7 +114,7 @@ export default function CourseModulesPage() {
         }
     }
 
-    if (!course) return <div className="p-6">Loading...</div>
+    if (!course) return <CourseModulesSkeleton />
 
     return (
         <div className="max-w-4xl mx-auto p-6 space-y-8">

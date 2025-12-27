@@ -7,6 +7,7 @@ import { courseAPI } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { Plus, Pencil, Trash, Layers } from "lucide-react"
+import { AdminCourseSkeleton } from "@/components/skeletons/admin-course-skeleton"
 
 // Define Course interface locally or import from context if reliable
 export interface Course {
@@ -61,7 +62,7 @@ export default function AdminCoursesPage() {
     }
   }
 
-  if (isLoading) return <div>Loading courses...</div>
+  if (isLoading) return <AdminCourseSkeleton />
 
   return (
     <div className="p-6 space-y-6">
