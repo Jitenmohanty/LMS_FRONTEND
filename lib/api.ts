@@ -190,6 +190,8 @@ export const paymentAPI = {
 export const reviewAPI = {
   getReviews: (courseId: string) => api.get(`/api/reviews/${courseId}`),
   addReview: (data: { courseId: string; rating: number; comment: string }) => api.post("/api/reviews", data),
+  addReply: (reviewId: string, reply: string) => api.post(`/api/reviews/${reviewId}/reply`, { reply }),
+  deleteReview: (reviewId: string) => api.delete(`/api/reviews/${reviewId}`),
 }
 
 // Admin API

@@ -12,7 +12,8 @@ import {
     LogOut,
     Home,
     Layers,
-    Award
+    Award,
+    MessageSquare,
 } from "lucide-react"
 
 const sidebarItems = [
@@ -20,6 +21,7 @@ const sidebarItems = [
     { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
     { name: "Users", href: "/admin/users", icon: Users },
     { name: "Courses", href: "/admin/courses", icon: BookOpen },
+    { name: "Reviews", href: "/admin/reviews", icon: MessageSquare },
     { name: "Plans", href: "/admin/plans", icon: Layers },
     { name: "Payments", href: "/admin/payments", icon: CreditCard },
     { name: "Certificates", href: "/admin/certificates", icon: Award },

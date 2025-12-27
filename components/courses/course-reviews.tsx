@@ -20,6 +20,8 @@ interface Review {
     rating: number
     comment: string
     createdAt: string
+    reply?: string
+    replyAt?: string
 }
 
 export function CourseReviews({ courseId }: { courseId: string }) {
@@ -192,6 +194,18 @@ export function CourseReviews({ courseId }: { courseId: string }) {
                                         ))}
                                     </div>
                                     <p className="text-muted-foreground">{review.comment}</p>
+
+                                    {review.reply && (
+                                        <div className="mt-4 p-4 bg-muted/50 rounded-lg">
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <span className="text-sm font-semibold text-primary">Instructor Response</span>
+                                                <span className="text-xs text-muted-foreground">
+                                                    {review.replyAt ? formatDistanceToNow(new Date(review.replyAt), { addSuffix: true }) : ""}
+                                                </span>
+                                            </div>
+                                            <p className="text-sm text-muted-foreground">{review.reply}</p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
