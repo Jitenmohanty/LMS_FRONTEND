@@ -1,3 +1,6 @@
+
+import { AdminUsersSkeleton } from "@/components/skeletons/admin-users-skeleton"
+
 export default function Loading() {
-  return null
+  return <AdminUsersSkeleton />
 }

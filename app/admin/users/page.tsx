@@ -6,6 +6,7 @@ import { adminAPI } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { Shield, ShieldAlert, ShieldCheck, MoreVertical } from "lucide-react"
+import { AdminUsersSkeleton } from "@/components/skeletons/admin-users-skeleton"
 
 interface User {
   _id: string
@@ -73,7 +74,7 @@ export default function UsersPage() {
     }
   }
 
-  if (isLoading) return <div>Loading users...</div>
+  if (isLoading) return <AdminUsersSkeleton />
 
   return (
     <div className="p-6 space-y-6">
