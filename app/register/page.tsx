@@ -71,24 +71,29 @@ export default function RegisterPage() {
   return (
     <main className="min-h-screen flex">
       {/* Left - Image */}
-      <div className="hidden lg:block lg:w-1/2 bg-gradient-to-br from-teal-500 to-teal-600 relative">
-        <div className="absolute inset-0 flex items-center justify-center p-12">
-          <div className="text-white text-center">
-            <h2 className="text-4xl font-bold mb-6">Join Our Community</h2>
-            <p className="text-lg text-white/80 mb-8">Get access to 250+ courses and learn from industry experts.</p>
-            <Image
-              src="/student-community-illustration.png"
-              alt="Community"
-              width={400}
-              height={400}
-              className="mx-auto"
-            />
-          </div>
+      {/* Left - Image */}
+      <div className="hidden lg:block lg:w-1/2 relative bg-gray-900">
+        <Image
+          src="/register-bg.png"
+          alt="Learning experience"
+          fill
+          className="object-cover opacity-90"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex flex-col justify-end p-16">
+          <blockquote className="space-y-2">
+            <p className="text-lg text-white/90">
+              &ldquo;This platform has completely transformed how I learn. The quality of courses and instructors is unmatched.&rdquo;
+            </p>
+            <footer className="text-sm text-white/70 font-medium">
+              — Sofia Davis, Product Designer
+            </footer>
+          </blockquote>
         </div>
       </div>
 
       {/* Right - Form */}
-      <div className="flex-1 flex items-center justify-center px-4 py-12">
+      <div className="flex-1 flex items-center justify-center px-4 py-8 md:py-12">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
             <Link href="/" className="inline-flex items-center gap-2 mb-8">
@@ -180,16 +185,16 @@ export default function RegisterPage() {
                 checked={agreeTerms}
                 onCheckedChange={(checked) => setAgreeTerms(checked as boolean)}
               />
-              <Label htmlFor="terms" className="text-sm text-gray-600 leading-tight">
+              <label htmlFor="terms" className="text-sm text-gray-600 leading-normal cursor-pointer">
                 I agree to the{" "}
-                <Link href="/terms" className="text-orange-500 hover:text-orange-600">
+                <Link href="/terms" className="text-orange-500 hover:text-orange-600 underline decoration-orange-500/30 underline-offset-4">
                   Terms of Service
                 </Link>{" "}
                 and{" "}
-                <Link href="/privacy" className="text-orange-500 hover:text-orange-600">
+                <Link href="/privacy" className="text-orange-500 hover:text-orange-600 underline decoration-orange-500/30 underline-offset-4">
                   Privacy Policy
                 </Link>
-              </Label>
+              </label>
             </div>
 
             <Button
