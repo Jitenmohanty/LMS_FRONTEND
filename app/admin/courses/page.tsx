@@ -66,13 +66,13 @@ export default function AdminCoursesPage() {
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Course Management</h2>
           <p className="text-gray-500">Create and manage your courses.</p>
         </div>
         <Link href="/admin/courses/new">
-          <Button className="bg-orange-500 hover:bg-orange-600 text-white">
+          <Button className="bg-orange-500 hover:bg-orange-600 text-white w-full md:w-auto">
             <Plus className="w-5 h-5 mr-2" />
             Create Course
           </Button>

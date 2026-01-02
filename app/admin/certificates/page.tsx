@@ -67,10 +67,10 @@ export default function AdminCertificatesPage() {
 
     const filteredCertificates = certificates.filter(
         (cert) =>
-            cert.user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            cert.user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            cert.course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            cert.certificateId.toLowerCase().includes(searchQuery.toLowerCase())
+            (cert.user as any).name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (cert.user as any).email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (cert.course as any).title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (cert.certificateId as any)?.toLowerCase().includes(searchQuery.toLowerCase())
     )
 
     if (authLoading || loading) {
@@ -93,13 +93,13 @@ export default function AdminCertificatesPage() {
 
             <Card>
                 <CardHeader>
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <CardTitle>Issued Certificates ({certificates.length})</CardTitle>
-                        <div className="relative w-64">
+                        <div className="relative w-full md:w-64">
                             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                             <Input
                                 placeholder="Search certificates..."
-                                className="pl-8"
+                                className="pl-8 w-full"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
@@ -130,8 +130,8 @@ export default function AdminCertificatesPage() {
                                         <TableCell className="font-mono text-xs">{cert.certificateId}</TableCell>
                                         <TableCell>
                                             <div className="flex flex-col">
-                                                <span className="font-medium">{cert.user.name}</span>
-                                                <span className="text-xs text-muted-foreground">{cert.user.email}</span>
+                                                <span className="font-medium">{(cert.user as any).name || 'Unknown'}</span>
+                                                <span className="text-xs text-muted-foreground">{(cert.user as any).email || ''}</span>
                                             </div>
                                         </TableCell>
                                         <TableCell className="max-w-[200px] truncate" title={cert.course.title}>

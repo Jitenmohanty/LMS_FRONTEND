@@ -123,15 +123,17 @@ export default function UserDetailsPage({ params }: { params: Promise<{ userId: 
     return (
         <div className="p-6 space-y-6 max-w-6xl mx-auto">
             {/* Header */}
-            <div className="flex items-center gap-4 mb-6">
-                <Button variant="ghost" size="icon" onClick={() => router.back()}>
-                    <ArrowLeft className="w-5 h-5" />
-                </Button>
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">{user.name}</h1>
-                    <p className="text-gray-500">{user.email}</p>
+            <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6">
+                <div className="flex items-center gap-4">
+                    <Button variant="ghost" size="icon" onClick={() => router.back()}>
+                        <ArrowLeft className="w-5 h-5" />
+                    </Button>
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-900 line-clamp-1">{user.name}</h1>
+                        <p className="text-gray-500 line-clamp-1">{user.email}</p>
+                    </div>
                 </div>
-                <div className="ml-auto flex gap-2">
+                <div className="flex gap-2 pl-14 md:pl-0 md:ml-auto">
                     <span className={`px-3 py-1 rounded-full text-sm font-medium ${user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'}`}>
                         {user.role}
                     </span>

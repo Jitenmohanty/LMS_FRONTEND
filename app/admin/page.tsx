@@ -137,18 +137,18 @@ export default function AdminDashboardPage() {
                 <p className="text-sm text-gray-500 text-center py-4">No recent users found.</p>
               ) : (
                 recentUsers.map((user) => (
-                  <div key={user._id} className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <Avatar className="h-9 w-9">
+                  <div key={user._id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 overflow-hidden">
+                    <div className="flex items-center gap-4 min-w-0">
+                      <Avatar className="h-9 w-9 flex-shrink-0">
                         <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${user.name}`} alt={user.name} />
                         <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
                       </Avatar>
-                      <div>
-                        <p className="text-sm font-medium leading-none">{user.name}</p>
-                        <p className="text-xs text-gray-500 mt-1">{user.email}</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium leading-none truncate">{user.name}</p>
+                        <p className="text-xs text-gray-500 mt-1 truncate">{user.email}</p>
                       </div>
                     </div>
-                    <div className="text-xs text-gray-400">
+                    <div className="text-xs text-gray-400 pl-14 sm:pl-0">
                       {new Date(user.createdAt).toLocaleDateString()}
                     </div>
                   </div>
