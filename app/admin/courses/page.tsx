@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { Plus, Pencil, Trash, Layers } from "lucide-react"
 import { AdminCourseSkeleton } from "@/components/skeletons/admin-course-skeleton"
+import { ConfirmationModal } from "@/components/modals/confirmation-modal"
 
 // Define Course interface locally or import from context if reliable
 export interface Course {
@@ -25,6 +26,10 @@ export default function AdminCoursesPage() {
   const [courses, setCourses] = useState<Course[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const { toast } = useToast()
+
+  const [deleteId, setDeleteId] = useState<string | null>(null)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   const fetchCourses = async () => {
     try {
@@ -46,11 +51,16 @@ export default function AdminCoursesPage() {
     fetchCourses()
   }, [])
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this course? This action cannot be undone.")) return
+  const confirmDelete = (id: string) => {
+    setDeleteId(id)
+    setIsDeleteModalOpen(true)
+  }
 
+  const handleDelete = async () => {
+    if (!deleteId) return
+    setIsDeleting(true)
     try {
-      await courseAPI.delete(id)
+      await courseAPI.delete(deleteId)
       toast({ title: "Success", description: "Course deleted successfully" })
       fetchCourses()
     } catch (error) {
@@ -59,6 +69,10 @@ export default function AdminCoursesPage() {
         description: "Failed to delete course",
         variant: "destructive",
       })
+    } finally {
+      setIsDeleting(false)
+      setIsDeleteModalOpen(false)
+      setDeleteId(null)
     }
   }
 
@@ -124,7 +138,7 @@ export default function AdminCoursesPage() {
                 variant="outline"
                 size="sm"
                 className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                onClick={() => handleDelete(course.id || course._id || "")}
+                onClick={() => confirmDelete(course.id || course._id || "")}
               >
                 <Trash className="w-4 h-4" />
               </Button>
@@ -138,6 +152,17 @@ export default function AdminCoursesPage() {
           </div>
         )}
       </div>
+
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDelete}
+        title="Delete Course"
+        description="Are you sure you want to delete this course? This action cannot be undone and will remove all associated data."
+        confirmText="Delete Course"
+        variant="destructive"
+        isLoading={isDeleting}
+      />
     </div>
   )
 }

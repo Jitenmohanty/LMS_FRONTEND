@@ -8,6 +8,8 @@ import { useToast } from "@/hooks/use-toast"
 import { Shield, ShieldAlert, ShieldCheck, MoreVertical } from "lucide-react"
 import { AdminUsersSkeleton } from "@/components/skeletons/admin-users-skeleton"
 
+import { ConfirmationModal } from "@/components/modals/confirmation-modal"
+
 interface User {
   _id: string
   name: string
@@ -21,6 +23,23 @@ export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const { toast } = useToast()
+
+  // Modal State
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean
+    title: string
+    description: string
+    onConfirm: () => Promise<void>
+    variant: "default" | "destructive"
+    confirmText?: string
+  }>({
+    isOpen: false,
+    title: "",
+    description: "",
+    onConfirm: async () => { },
+    variant: "default",
+  })
+  const [isProcessing, setIsProcessing] = useState(false)
 
   const fetchUsers = async () => {
     try {
@@ -42,42 +61,67 @@ export default function UsersPage() {
     fetchUsers()
   }, [])
 
-  const handleBlockToggle = async (user: User) => {
-    try {
-      if (user.isBlocked) {
-        await adminAPI.unblockUser(user._id)
-        toast({ title: "Success", description: "User unblocked successfully" })
-      } else {
-        await adminAPI.blockUser(user._id)
-        toast({ title: "Success", description: "User blocked successfully" })
+  const handleBlockToggle = (user: User) => {
+    const action = user.isBlocked ? "Unblock" : "Block"
+    setModalConfig({
+      isOpen: true,
+      title: `${action} User`,
+      description: `Are you sure you want to ${action.toLowerCase()} ${user.name}?`,
+      variant: user.isBlocked ? "default" : "destructive",
+      confirmText: action,
+      onConfirm: async () => {
+        setIsProcessing(true)
+        try {
+          if (user.isBlocked) {
+            await adminAPI.unblockUser(user._id)
+            toast({ title: "Success", description: "User unblocked successfully" })
+          } else {
+            await adminAPI.blockUser(user._id)
+            toast({ title: "Success", description: "User blocked successfully" })
+          }
+          fetchUsers()
+        } catch (error) {
+          toast({
+            title: "Error",
+            description: "Failed to update user status",
+            variant: "destructive",
+          })
+        } finally {
+          setIsProcessing(false)
+          setModalConfig(prev => ({ ...prev, isOpen: false }))
+        }
       }
-      fetchUsers() // Refresh list
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update user status",
-        variant: "destructive",
-      })
-    }
+    })
   }
 
-  const handleRoleChange = async (user: User) => {
+  const handleRoleChange = (user: User) => {
     const newRole = user.role === 'admin' ? 'user' : 'admin'
-    if (!confirm(`Are you sure you want to change role to ${newRole}?`)) return;
-
-    try {
-      await adminAPI.changeUserRole(user._id, newRole)
-      toast({ title: "Success", description: `User role updated to ${newRole}` })
-      fetchUsers()
-    } catch (error) {
-      toast({ variant: "destructive", title: "Error", description: "Failed to change role" })
-    }
+    setModalConfig({
+      isOpen: true,
+      title: "Change User Role",
+      description: `Are you sure you want to change ${user.name}'s role to ${newRole}?`,
+      variant: "default",
+      confirmText: "Change Role",
+      onConfirm: async () => {
+        setIsProcessing(true)
+        try {
+          await adminAPI.changeUserRole(user._id, newRole)
+          toast({ title: "Success", description: `User role updated to ${newRole}` })
+          fetchUsers()
+        } catch (error) {
+          toast({ variant: "destructive", title: "Error", description: "Failed to change role" })
+        } finally {
+          setIsProcessing(false)
+          setModalConfig(prev => ({ ...prev, isOpen: false }))
+        }
+      }
+    })
   }
 
   if (isLoading) return <AdminUsersSkeleton />
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 lg:p-12">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">User Management</h2>
@@ -155,6 +199,17 @@ export default function UsersPage() {
           </table>
         </div>
       </div>
+
+      <ConfirmationModal
+        isOpen={modalConfig.isOpen}
+        onClose={() => setModalConfig(prev => ({ ...prev, isOpen: false }))}
+        onConfirm={modalConfig.onConfirm}
+        title={modalConfig.title}
+        description={modalConfig.description}
+        variant={modalConfig.variant}
+        confirmText={modalConfig.confirmText}
+        isLoading={isProcessing}
+      />
     </div>
   )
 }

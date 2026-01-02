@@ -29,6 +29,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { AdminPlansSkeleton } from "@/components/skeletons/admin-plans-skeleton"
+import { ConfirmationModal } from "@/components/modals/confirmation-modal"
 import { Pencil, Trash2, Plus, Loader2 } from "lucide-react"
 import { toast } from "@/components/ui/use-toast"
 
@@ -48,6 +50,11 @@ export default function PlansPage() {
     const [isLoading, setIsLoading] = useState(true)
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [editingPlan, setEditingPlan] = useState<Plan | null>(null)
+
+    // Modal State
+    const [deleteId, setDeleteId] = useState<string | null>(null)
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+    const [isDeleting, setIsDeleting] = useState(false)
 
     // Form State
     const [formData, setFormData] = useState({
@@ -114,10 +121,16 @@ export default function PlansPage() {
         }
     }
 
-    const handleDelete = async (id: string) => {
-        if (!confirm("Are you sure you want to delete this plan?")) return
+    const confirmDelete = (id: string) => {
+        setDeleteId(id)
+        setIsDeleteModalOpen(true)
+    }
+
+    const handleDelete = async () => {
+        if (!deleteId) return
+        setIsDeleting(true)
         try {
-            await subscriptionAPI.deletePlan(id)
+            await subscriptionAPI.deletePlan(deleteId)
             toast({ title: "Success", description: "Plan deleted successfully" })
             fetchPlans()
         } catch (error) {
@@ -126,6 +139,10 @@ export default function PlansPage() {
                 description: "Failed to delete plan",
                 variant: "destructive",
             })
+        } finally {
+            setIsDeleting(false)
+            setIsDeleteModalOpen(false)
+            setDeleteId(null)
         }
     }
 
@@ -163,6 +180,8 @@ export default function PlansPage() {
         })
         setIsDialogOpen(true)
     }
+
+    if (isLoading) return <AdminPlansSkeleton />
 
     return (
         <div className="p-6 space-y-6 lg:p-12">
@@ -279,13 +298,7 @@ export default function PlansPage() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {isLoading ? (
-                            <TableRow>
-                                <TableCell colSpan={7} className="h-24 text-center">
-                                    <Loader2 className="h-6 w-6 animate-spin mx-auto" />
-                                </TableCell>
-                            </TableRow>
-                        ) : plans.length === 0 ? (
+                        {plans.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
                                     No plans found. Create one to get started.
@@ -311,7 +324,7 @@ export default function PlansPage() {
                                         <Button variant="ghost" size="icon" onClick={() => openEdit(plan)}>
                                             <Pencil className="h-4 w-4" />
                                         </Button>
-                                        <Button variant="ghost" size="icon" className="text-red-600" onClick={() => handleDelete(plan._id)}>
+                                        <Button variant="ghost" size="icon" className="text-red-600" onClick={() => confirmDelete(plan._id)}>
                                             <Trash2 className="h-4 w-4" />
                                         </Button>
                                     </TableCell>
@@ -321,6 +334,17 @@ export default function PlansPage() {
                     </TableBody>
                 </Table>
             </div>
+
+            <ConfirmationModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={handleDelete}
+                title="Delete Plan"
+                description="Are you sure you want to delete this subscription plan? This action cannot be undone."
+                confirmText="Delete Plan"
+                variant="destructive"
+                isLoading={isDeleting}
+            />
         </div>
     )
 }

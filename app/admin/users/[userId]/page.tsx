@@ -121,7 +121,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ userId: 
     )
 
     return (
-        <div className="p-6 space-y-6 max-w-6xl mx-auto">
+        <div className="p-6 space-y-6 max-w-6xl mx-auto lg:p-12">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6">
                 <div className="flex items-center gap-4">

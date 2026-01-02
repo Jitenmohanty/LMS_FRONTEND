@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Search, Download, FileText, CheckCircle, AlertCircle, Loader2 } from "lucide-react"
+import { Search, Download, FileText, CheckCircle, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { AdminCertificatesSkeleton } from "@/components/skeletons/admin-certificates-skeleton"
 import {
     Table,
     TableBody,
@@ -74,11 +75,7 @@ export default function AdminCertificatesPage() {
     )
 
     if (authLoading || loading) {
-        return (
-            <div className="flex items-center justify-center min-h-[400px]">
-                <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
-            </div>
-        )
+        return <AdminCertificatesSkeleton />
     }
 
     return (
