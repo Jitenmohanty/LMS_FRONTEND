@@ -10,6 +10,7 @@ import { ArrowLeft, Shield, Ban, CheckCircle, Search, Trash2, Plus } from "lucid
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { AdminUserDetailSkeleton } from "@/components/skeletons/admin-user-detail-skeleton"
 
 interface User {
     _id: string
@@ -111,7 +112,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ userId: 
         }
     }
 
-    if (isLoading) return <div className="p-6">Loading...</div>
+    if (isLoading) return <AdminUserDetailSkeleton />
     if (!user) return <div className="p-6">User not found</div>
 
     const filteredAvailableCourses = allCourses.filter(

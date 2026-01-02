@@ -149,7 +149,7 @@ export default function AdminReviewsPage() {
     }
 
     return (
-        <div className="p-6 space-y-6 max-w-5xl mx-auto">
+        <div className="p-6 space-y-6 max-w-5xl ">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
