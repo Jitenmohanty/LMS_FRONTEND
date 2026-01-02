@@ -70,7 +70,7 @@ export function CourseCard({ course }: CourseCardProps) {
             )}
           </div>
           <Link href={`/courses/${course.id || course._id}`}>
-            <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white rounded-full">
+            <Button size="sm" className="bg-orange-500 hover:bg-orange-600 text-white rounded-full cursor-pointer">
               Enroll Now
             </Button>
           </Link>

@@ -196,7 +196,7 @@ function CoursesContent() {
             <div className="text-center mt-12">
               <Button
                 variant="outline"
-                className="rounded-full px-8 border-orange-500 text-orange-500 hover:bg-orange-50 bg-transparent"
+                className="rounded-full px-8 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white bg-transparent cursor-pointer"
               >
                 Load More Courses
               </Button>

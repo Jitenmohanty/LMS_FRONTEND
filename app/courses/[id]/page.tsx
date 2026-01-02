@@ -455,12 +455,12 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
                         Start Learning
                       </Button>
                     ) : (
-                      <Button onClick={handleEnroll} disabled={isProcessing} className="w-full h-12 text-lg rounded-xl">
+                      <Button onClick={handleEnroll} disabled={isProcessing} className="w-full h-12 text-lg rounded-xl cursor-pointer">
                         {isProcessing ? "Processing..." : "Enroll Now"}
                       </Button>
                     )}
 
-                    <Button variant="outline" className="w-full h-12 text-lg rounded-xl bg-transparent">
+                    <Button variant="outline" className="w-full h-12 text-lg rounded-xl bg-transparent cursor-pointer">
                       <ShoppingCart className="w-5 h-5 mr-2" />
                       Add to Cart
                     </Button>
