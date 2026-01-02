@@ -6,68 +6,61 @@ export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="py-16 lg:py-24">
-        <div className="container max-w-4xl">
-          <h1 className="text-4xl font-bold mb-8">Privacy Policy</h1>
+      <main className="py-12 lg:py-24">
+        <div className="container px-4 sm:px-6 max-w-4xl">
+          <h1 className="text-3xl sm:text-4xl font-bold mb-8">Privacy Policy</h1>
           <p className="text-muted-foreground mb-8">Last updated: December 10, 2024</p>
 
-          <div className="prose prose-gray max-w-none space-y-8">
+          <div className="prose prose-sm sm:prose-base prose-gray max-w-none space-y-8">
             <section>
               <h2 className="text-2xl font-semibold mb-4">1. Information We Collect</h2>
               <p className="text-muted-foreground leading-relaxed">
-                We collect information you provide directly to us, such as when you create an account, purchase a
-                course, or contact us for support. This may include your name, email address, payment information, and
-                any other information you choose to provide.
+                We only collect the information necessary to provide you with a great learning experience.
+                This includes basic details like your name and email when you sign up, and course progress data
+                to help you track your learning journey.
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-4">2. How We Use Your Information</h2>
-              <p className="text-muted-foreground leading-relaxed">We use the information we collect to:</p>
+              <h2 className="text-2xl font-semibold mb-4">2. How We Use It</h2>
+              <p className="text-muted-foreground leading-relaxed">
+                We reuse your information for one purpose: to make your learning better. This includes:
+              </p>
               <ul className="list-disc pl-6 mt-4 space-y-2 text-muted-foreground">
-                <li>Provide, maintain, and improve our services</li>
-                <li>Process transactions and send related information</li>
-                <li>Send you technical notices and support messages</li>
-                <li>Respond to your comments and questions</li>
-                <li>Send promotional communications (with your consent)</li>
+                <li>Giving you access to your purchased courses.</li>
+                <li>Sending you important updates about your account or courses.</li>
+                <li>Improving our platform based on how students use it.</li>
               </ul>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold mb-4">3. Information Sharing</h2>
-              <p className="text-muted-foreground leading-relaxed">
-                We do not share your personal information with third parties except as described in this policy. We may
-                share information with vendors and service providers who need access to such information to carry out
-                work on our behalf.
+              <p className="text-muted-foreground leading-relaxed mt-4">
+                We do NOT sell your personal data to anyone.
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-4">4. Data Security</h2>
+              <h2 className="text-2xl font-semibold mb-4">3. Data Security</h2>
               <p className="text-muted-foreground leading-relaxed">
-                We take reasonable measures to help protect information about you from loss, theft, misuse, and
-                unauthorized access, disclosure, alteration, and destruction.
+                We take the security of your data seriously. We use industry-standard security measures
+                to keep your personal information safe and secure.
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-4">5. Cookies</h2>
+              <h2 className="text-2xl font-semibold mb-4">4. Your Rights</h2>
               <p className="text-muted-foreground leading-relaxed">
-                We use cookies and similar tracking technologies to track activity on our platform and hold certain
-                information. You can instruct your browser to refuse all cookies or to indicate when a cookie is being
-                sent.
+                You own your data. If you ever want to see what information we have about you,
+                incorrect it, or delete your account entirely, just let us know.
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold mb-4">6. Contact Us</h2>
+              <h2 className="text-2xl font-semibold mb-4">5. Contact Us</h2>
               <p className="text-muted-foreground leading-relaxed">
-                If you have any questions about this Privacy Policy, please contact us at{" "}
-                <Link href="mailto:privacy@devskill.com" className="text-primary hover:underline">
-                  privacy@devskill.com
-                </Link>
-                .
+                If you have any questions about your privacy, we're here to help. Reach out to us at:
               </p>
+              <div className="mt-4 border-l-4 border-primary pl-4">
+                <p className="font-semibold">DevSkill Impact Team</p>
+                <p><a href="mailto:info.nextgensolution90@gmail.com" className="text-primary hover:underline">info.nextgensolution90@gmail.com</a></p>
+              </div>
             </section>
           </div>
         </div>

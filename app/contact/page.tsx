@@ -17,14 +17,14 @@ const contactInfo = [
   {
     icon: Mail,
     title: "Email Us",
-    description: "support@devskill.com",
+    description: "info.nextgensolution90@gmail.com",
     subtitle: "We reply within 24 hours",
   },
   {
     icon: Phone,
     title: "Call Us",
-    description: "+1 (555) 123-4567",
-    subtitle: "Mon-Fri, 9am-6pm EST",
+    description: "+91-8338829961",
+    subtitle: "Mon-Sat, 9am-6pm IST",
   },
   {
     icon: MapPin,
@@ -193,6 +193,9 @@ export default function ContactPage() {
                     <Button type="submit" className="w-full" disabled={isSubmitting}>
                       {isSubmitting ? "Sending..." : "Send Message"}
                     </Button>
+                    <p className="text-xs text-center text-muted-foreground mt-4">
+                      By submitting this form, you agree to our <a href="/terms" className="underline hover:text-primary">Terms of Service</a>.
+                    </p>
                   </form>
                 )}
               </CardContent>

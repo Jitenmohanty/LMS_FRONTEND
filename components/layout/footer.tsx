@@ -7,7 +7,6 @@ export function Footer() {
       { name: "About Us", href: "/about" },
       { name: "Careers", href: "/careers" },
       { name: "Blog", href: "/blog" },
-      { name: "Press", href: "/press" },
     ],
     categories: [
       { name: "Development", href: "/courses?category=development" },
@@ -17,17 +16,16 @@ export function Footer() {
       { name: "Marketing", href: "/courses?category=marketing" },
     ],
     support: [
-      { name: "Help Center", href: "/help" },
+      { name: "Support", href: "/contact" },
       { name: "Terms of Service", href: "/terms" },
       { name: "Privacy Policy", href: "/privacy" },
-      { name: "Contact Us", href: "/contact" },
     ],
   }
 
   return (
     <footer className="bg-gray-900 text-gray-300">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
           {/* Brand */}
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center gap-2 mb-4">
@@ -97,21 +95,35 @@ export function Footer() {
             </ul>
           </div>
 
+          {/* Support */}
+          <div>
+            <h4 className="text-white font-semibold mb-4">Support</h4>
+            <ul className="space-y-3">
+              {footerLinks.support.map((link) => (
+                <li key={link.name}>
+                  <Link href={link.href} className="hover:text-orange-500 transition-colors">
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
           {/* Contact */}
           <div>
-            <h4 className="text-white font-semibold mb-4">Contact Us</h4>
+            <h4 className="text-white font-semibold mb-4">Contact Info</h4>
             <ul className="space-y-3">
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-orange-500" />
-                <span>support@devskill.com</span>
+                <span> info.nextgensolution90@gmail.com</span>
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-orange-500" />
-                <span>+1 (555) 123-4567</span>
+                <span>+91-8338829961</span>
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 text-orange-500 mt-1" />
-                <span>123 Learning Street, Education City, EC 12345</span>
+                <span>Nilachal Bhaban, B-14 , Dalak, Odagaon , Nayagarh, 752081</span>
               </li>
             </ul>
           </div>
