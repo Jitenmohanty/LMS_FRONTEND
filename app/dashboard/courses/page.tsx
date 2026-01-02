@@ -81,7 +81,7 @@ export default function MyCoursesPage() {
   const notStartedCourses = enrolledCourses.filter((c) => c.progress === 0)
 
   return (
-    <div className="p-6 lg:p-8">
+    <div className="p-6 lg:p-12">
       <div className="mb-8">
         <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">My Courses</h1>
         <p className="text-gray-600">Track your progress and continue learning</p>

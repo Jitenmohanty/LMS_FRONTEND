@@ -73,7 +73,7 @@ export default function ContinueLearningPage() {
     }
 
     return (
-        <div className="p-6 lg:p-8 space-y-6">
+        <div className="p-6 lg:p-12 space-y-6">
             <div className="space-y-1">
                 <h1 className="text-3xl font-bold tracking-tight">Continue Learning</h1>
                 <p className="text-muted-foreground">Resume where you left off.</p>

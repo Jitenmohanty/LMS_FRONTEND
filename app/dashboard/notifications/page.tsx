@@ -7,7 +7,7 @@ import Link from "next/link"
 
 export default function NotificationsPage() {
     return (
-        <div className="p-6 lg:p-8 h-full flex flex-col">
+        <div className="p-6 lg:p-12 h-full flex flex-col">
             <div className="mb-6">
                 <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-2">Notifications</h1>
                 <p className="text-gray-500">Stay updated with your courses and achievements.</p>
