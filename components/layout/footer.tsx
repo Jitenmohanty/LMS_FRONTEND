@@ -25,9 +25,9 @@ export function Footer() {
   return (
     <footer className="bg-gray-900 text-gray-300">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8">
           {/* Brand */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-3">
             <Link href="/" className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">D</span>
@@ -68,7 +68,7 @@ export function Footer() {
           </div>
 
           {/* Company Info */}
-          <div>
+          <div className="lg:col-span-2">
             <h4 className="text-white font-semibold mb-4">Company Info</h4>
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
@@ -82,7 +82,7 @@ export function Footer() {
           </div>
 
           {/* Top Categories */}
-          <div>
+          <div className="lg:col-span-2">
             <h4 className="text-white font-semibold mb-4">Top Categories</h4>
             <ul className="space-y-3">
               {footerLinks.categories.map((link) => (
@@ -96,7 +96,7 @@ export function Footer() {
           </div>
 
           {/* Support */}
-          <div>
+          <div className="lg:col-span-2">
             <h4 className="text-white font-semibold mb-4">Support</h4>
             <ul className="space-y-3">
               {footerLinks.support.map((link) => (
@@ -110,19 +110,19 @@ export function Footer() {
           </div>
 
           {/* Contact */}
-          <div>
+          <div className="lg:col-span-3">
             <h4 className="text-white font-semibold mb-4">Contact Info</h4>
             <ul className="space-y-3">
-              <li className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-orange-500" />
-                <span> info.nextgensolution90@gmail.com</span>
+              <li className="flex items-start gap-3">
+                <Mail className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />
+                <span className="break-all">info.nextgensolution90@gmail.com</span>
               </li>
-              <li className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-orange-500" />
+              <li className="flex items-start gap-3">
+                <Phone className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />
                 <span>+91-8338829961</span>
               </li>
-              <li className="flex items-start gap-2">
-                <MapPin className="w-4 h-4 text-orange-500 mt-1" />
+              <li className="flex items-start gap-3">
+                <MapPin className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />
                 <span>Nilachal Bhaban, B-14 , Dalak, Odagaon , Nayagarh, 752081</span>
               </li>
             </ul>
