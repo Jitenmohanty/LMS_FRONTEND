@@ -80,12 +80,12 @@ export default function RegisterPage() {
           className="object-cover opacity-90"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex flex-col justify-end p-16">
-          <blockquote className="space-y-2">
-            <p className="text-lg text-white/90">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex flex-col justify-end p-16 lg:p-24">
+          <blockquote className="space-y-4 max-w-lg">
+            <p className="text-xl lg:text-2xl font-medium text-white/95 leading-relaxed">
               &ldquo;This platform has completely transformed how I learn. The quality of courses and instructors is unmatched.&rdquo;
             </p>
-            <footer className="text-sm text-white/70 font-medium">
+            <footer className="text-base lg:text-lg text-white/80 font-medium">
               — Sofia Davis, Product Designer
             </footer>
           </blockquote>
@@ -93,17 +93,17 @@ export default function RegisterPage() {
       </div>
 
       {/* Right - Form */}
-      <div className="flex-1 flex items-center justify-center px-4 py-8 md:py-12">
-        <div className="w-full max-w-md space-y-8">
+      <div className="flex-1 flex items-center justify-center px-4 py-8 md:py-12 lg:py-24 bg-white">
+        <div className="w-full max-w-md lg:max-w-lg space-y-8 lg:space-y-10">
           <div className="text-center">
-            <Link href="/" className="inline-flex items-center gap-2 mb-8">
-              <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center">
-                <span className="text-white font-bold text-lg">D</span>
+            <Link href="/" className="inline-flex items-center gap-2 mb-8 lg:mb-10">
+              <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/20">
+                <span className="text-white font-bold text-xl">D</span>
               </div>
-              <span className="text-2xl font-bold text-gray-900">DEVSKILL</span>
+              <span className="text-2xl lg:text-3xl font-bold text-gray-900 tracking-tight">DEVSKILL</span>
             </Link>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Account</h1>
-            <p className="text-gray-600">Start your learning journey today</p>
+            <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-3 tracking-tight">Create Account</h1>
+            <p className="text-gray-600 lg:text-lg">Start your learning journey today</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">

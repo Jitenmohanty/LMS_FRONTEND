@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Header from "@/components/layout/header"
 import Footer from "@/components/layout/footer"
@@ -19,18 +18,21 @@ const contactInfo = [
     title: "Email Us",
     description: "info.nextgensolution90@gmail.com",
     subtitle: "We reply within 24 hours",
+    color: "bg-blue-500/10 text-blue-600",
   },
   {
     icon: Phone,
     title: "Call Us",
     description: "+91-8338829961",
     subtitle: "Mon-Sat, 9am-6pm IST",
+    color: "bg-green-500/10 text-green-600",
   },
   {
     icon: MapPin,
     title: "Visit Us",
-    description: "123 Learning Street",
+    description: "Nilachal Bhaban, B-14 , Dalak, Odagaon , Nayagarh, 752081",
     subtitle: "San Francisco, CA 94102",
+    color: "bg-purple-500/10 text-purple-600",
   },
 ]
 
@@ -44,38 +46,15 @@ export default function ContactPage() {
     setIsSubmitting(true)
     setErrors({})
 
-    // Using direct DOM access for simplicity as current component structure uses IDs
-    // Ideally should verify with refs or React Hook Form
-    const firstName = (document.getElementById("firstName") as HTMLInputElement).value
-    const lastName = (document.getElementById("lastName") as HTMLInputElement).value
-    const email = (document.getElementById("email") as HTMLInputElement).value
-    // Select is a bit trickier with Shadcn UI since it hides the real input, 
-    // but we can try to get the value or just default for now if not easily accessible via ID in this structure.
-    // However, looking at the code, Select doesn't have a name/id prop on the primitive that easily exposes value to document.getElementById
-    // Let's assume for this "Frontend Only" step we might need state for Select if it doesn't work, 
-    // but for text inputs it's fine.
-
-    // Actually, let's just grab the text inputs which are crucial.
-    const message = (document.getElementById("message") as HTMLTextAreaElement).value
-
-    // For Select, since it's a controlled component in many examples or headless, 
-    // we might miss it if we don't treat it as controlled state.
-    // But the current code shows <Select> without value/onValueChange props in the 'view_file' output?
-    // Wait, checked file: 
-    // <Select> <SelectTrigger>... </Select>
-    // It is uncontrolled. Shadcn Select usually needs onValueChange. 
-    // Let's just pass a default subject or "General" for now to valid payload.
-
     const formData = {
       firstName: (document.getElementById("firstName") as HTMLInputElement).value,
       lastName: (document.getElementById("lastName") as HTMLInputElement).value,
       email: (document.getElementById("email") as HTMLInputElement).value,
-      subject: "General Inquiry", // Still placeholder until we wire up Select state
+      subject: "General Inquiry",
       message: (document.getElementById("message") as HTMLTextAreaElement).value
     }
 
     try {
-      // Validate
       const { contactFormSchema } = await import("@/lib/validations")
       const validatedData = contactFormSchema.parse(formData)
 
@@ -84,7 +63,6 @@ export default function ContactPage() {
       setSubmitted(true)
     } catch (error: any) {
       if (error.issues) {
-        // Zod Error
         const newErrors: any = {}
         error.issues.forEach((issue: any) => {
           newErrors[issue.path[0]] = issue.message
@@ -99,110 +77,123 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gray-50/50">
       <Header />
 
-      <section className="py-12 lg:py-24">
-        <div className="container px-4 md:px-6">
-          <div className="text-center mb-8 lg:mb-12">
-            <span className="inline-block rounded-full bg-primary/10 px-4 py-1 text-sm font-medium text-primary mb-4">
-              Contact Us
+      {/* Hero Section */}
+      <div className="bg-slate-900 text-white py-20 lg:py-28 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_110%)] opacity-20" />
+        <div className="container relative z-10 px-4 sm:px-6 text-center max-w-3xl mx-auto">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/10 text-orange-400 text-sm font-medium mb-6 border border-orange-500/20">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
             </span>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">Get in Touch</h1>
-            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-              Have questions? We would love to hear from you. Send us a message and we will respond as soon as possible.
-            </p>
+            Contact Us
           </div>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 tracking-tight">Get in <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-orange-200">Touch</span></h1>
+          <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
+            Have questions? We would love to hear from you. Send us a message and we will respond as soon as possible.
+          </p>
+        </div>
+      </div>
 
-          <div className="grid lg:grid-cols-3 gap-8 mb-12">
-            {contactInfo.map((info) => (
-              <Card key={info.title}>
-                <CardContent className="pt-6 text-center">
-                  <div className="mx-auto h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                    <info.icon className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="font-semibold mb-1">{info.title}</h3>
-                  <p className="text-foreground">{info.description}</p>
-                  <p className="text-sm text-muted-foreground">{info.subtitle}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+      <main className="container px-4 sm:px-6 -mt-16 relative z-20 pb-20">
+        {/* Contact Cards */}
+        <div className="grid lg:grid-cols-3 gap-6 mb-12">
+          {contactInfo.map((info) => (
+            <div key={info.title} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center hover:shadow-md transition-shadow">
+              <div className={`mx-auto h-14 w-14 rounded-2xl ${info.color} flex items-center justify-center mb-6`}>
+                <info.icon className="h-7 w-7" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">{info.title}</h3>
+              <p className="text-gray-600 font-medium mb-1">{info.description}</p>
+              <p className="text-sm text-gray-500">{info.subtitle}</p>
+            </div>
+          ))}
+        </div>
 
-          <div className="max-w-2xl mx-auto">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MessageSquare className="h-5 w-5" />
-                  Send us a Message
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {submitted ? (
-                  <div className="text-center py-8">
-                    <div className="mx-auto h-16 w-16 rounded-full bg-green-100 flex items-center justify-center mb-4">
-                      <Send className="h-8 w-8 text-green-500" />
-                    </div>
-                    <h3 className="text-xl font-semibold mb-2">Message Sent!</h3>
-                    <p className="text-muted-foreground">
-                      Thank you for reaching out. We will get back to you shortly.
-                    </p>
-                    <Button className="mt-4" onClick={() => setSubmitted(false)}>
-                      Send Another Message
-                    </Button>
+        {/* Contact Form */}
+        <div className="max-w-3xl mx-auto bg-white rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
+          <div className="p-8 md:p-12">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="h-10 w-10 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600">
+                <MessageSquare className="h-5 w-5" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900">Send us a Message</h2>
+            </div>
+
+            {submitted ? (
+              <div className="text-center py-12">
+                <div className="mx-auto h-20 w-20 rounded-full bg-green-100 flex items-center justify-center mb-6">
+                  <Send className="h-10 w-10 text-green-600" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Message Sent!</h3>
+                <p className="text-gray-600 max-w-sm mx-auto mb-8">
+                  Thank you for reaching out. We will get back to you shortly.
+                </p>
+                <Button
+                  onClick={() => setSubmitted(false)}
+                  className="bg-gray-900 text-white hover:bg-gray-800 rounded-xl h-12 px-8"
+                >
+                  Send Another Message
+                </Button>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid sm:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName" className="text-sm font-semibold text-gray-700">First Name</Label>
+                    <Input id="firstName" placeholder="John" className="h-12 rounded-xl bg-gray-50 border-gray-200 focus:bg-white transition-colors" />
+                    {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
                   </div>
-                ) : (
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div className="grid gap-2">
-                        <Label htmlFor="firstName">First Name</Label>
-                        <Input id="firstName" placeholder="John" />
-                        {errors.firstName && <p className="text-red-500 text-xs">{errors.firstName}</p>}
-                      </div>
-                      <div className="grid gap-2">
-                        <Label htmlFor="lastName">Last Name</Label>
-                        <Input id="lastName" placeholder="Doe" />
-                        {errors.lastName && <p className="text-red-500 text-xs">{errors.lastName}</p>}
-                      </div>
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" placeholder="john@example.com" />
-                      {errors.email && <p className="text-red-500 text-xs">{errors.email}</p>}
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="subject">Subject</Label>
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a subject" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="general">General Inquiry</SelectItem>
-                          <SelectItem value="support">Technical Support</SelectItem>
-                          <SelectItem value="billing">Billing Question</SelectItem>
-                          <SelectItem value="partnership">Partnership</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="message">Message</Label>
-                      <Textarea id="message" placeholder="How can we help you?" rows={5} />
-                      {errors.message && <p className="text-red-500 text-xs">{errors.message}</p>}
-                    </div>
-                    <Button type="submit" className="w-full" disabled={isSubmitting}>
-                      {isSubmitting ? "Sending..." : "Send Message"}
-                    </Button>
-                    <p className="text-xs text-center text-muted-foreground mt-4">
-                      By submitting this form, you agree to our <a href="/terms" className="underline hover:text-primary">Terms of Service</a>.
-                    </p>
-                  </form>
-                )}
-              </CardContent>
-            </Card>
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName" className="text-sm font-semibold text-gray-700">Last Name</Label>
+                    <Input id="lastName" placeholder="Doe" className="h-12 rounded-xl bg-gray-50 border-gray-200 focus:bg-white transition-colors" />
+                    {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-sm font-semibold text-gray-700">Email Address</Label>
+                  <Input id="email" type="email" placeholder="john@example.com" className="h-12 rounded-xl bg-gray-50 border-gray-200 focus:bg-white transition-colors" />
+                  {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="subject" className="text-sm font-semibold text-gray-700">Subject</Label>
+                  <Select>
+                    <SelectTrigger className="h-12 rounded-xl bg-gray-50 border-gray-200 focus:bg-white transition-colors">
+                      <SelectValue placeholder="Select a subject" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="general">General Inquiry</SelectItem>
+                      <SelectItem value="support">Technical Support</SelectItem>
+                      <SelectItem value="billing">Billing Question</SelectItem>
+                      <SelectItem value="partnership">Partnership</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="message" className="text-sm font-semibold text-gray-700">Message</Label>
+                  <Textarea id="message" placeholder="How can we help you?" rows={6} className="rounded-xl bg-gray-50 border-gray-200 focus:bg-white transition-colors resize-none p-4" />
+                  {errors.message && <p className="text-red-500 text-sm mt-1">{errors.message}</p>}
+                </div>
+
+                <Button type="submit" className="w-full h-14 text-lg font-medium bg-orange-600 hover:bg-orange-700 text-white rounded-xl shadow-lg shadow-orange-500/20" disabled={isSubmitting}>
+                  {isSubmitting ? "Sending..." : "Send Message"}
+                </Button>
+
+                <p className="text-sm text-center text-gray-500 mt-4">
+                  By submitting this form, you agree to our <a href="/terms" className="text-orange-600 hover:underline">Terms of Service</a>.
+                </p>
+              </form>
+            )}
           </div>
         </div>
-      </section>
+      </main>
 
       <Footer />
     </div>
