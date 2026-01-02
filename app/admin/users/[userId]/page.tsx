@@ -202,7 +202,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ userId: 
                                             <div key={course._id} className="flex items-center justify-between p-3 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors">
                                                 <div className="flex-1 min-w-0 mr-2">
                                                     <p className="font-medium text-sm truncate">{course.title}</p>
-                                                    <p className="text-xs text-gray-500">${course.price}</p>
+                                                    <p className="text-xs text-gray-500">₹{course.price}</p>
                                                 </div>
                                                 <Button
                                                     size="sm"

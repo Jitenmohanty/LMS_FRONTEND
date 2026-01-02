@@ -425,17 +425,17 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
                     <div className="flex items-center gap-3">
                       {course.discountPrice ? (
                         <>
-                          <span className="text-3xl font-bold">${course.discountPrice}</span>
-                          <span className="text-xl text-muted-foreground line-through">${course.price}</span>
+                          <span className="text-3xl font-bold">₹{course.discountPrice}</span>
+                          <span className="text-xl text-muted-foreground line-through">₹{course.price}</span>
                           <span className="px-2 py-1 bg-red-100 text-red-600 text-sm font-medium rounded">
                             {Math.round(((course.price - course.discountPrice) / course.price) * 100)}% off
                           </span>
                         </>
                       ) : (
-                        <span className="text-3xl font-bold">${course.price}</span>
+                        <span className="text-3xl font-bold">₹{course.price}</span>
                       )}
                     </div>
-
+                      
                     {isEnrolled ? (
                       <Button
                         onClick={() => {

@@ -218,7 +218,7 @@ export default function DashboardPage() {
             <p className="text-sm text-white/80 mb-4">Access all 250+ courses</p>
             <div className="flex items-center justify-between mb-4">
               <span className="text-sm text-white/80">Renews in 25 days</span>
-              <span className="text-2xl font-bold">$29/mo</span>
+              <span className="text-2xl font-bold"> ₹29/mo</span>
             </div>
             <Link href="/pricing">
               <Button className="w-full bg-white text-orange-600 hover:bg-gray-100 rounded-full">
@@ -249,7 +249,7 @@ export default function DashboardPage() {
                         {course.title}
                       </p>
                       <p className="text-xs text-gray-500">
-                        {course.isFree ? "Free" : `$${course.price}`}
+                        {course.isFree ? "Free" : `₹${course.price}`}
                       </p>
                     </div>
                     <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-orange-500 transition-colors" />

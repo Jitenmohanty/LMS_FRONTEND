@@ -62,11 +62,11 @@ export function CourseCard({ course }: CourseCardProps) {
           <div className="flex items-center gap-2">
             {course.discountPrice ? (
               <>
-                <span className="text-lg font-bold text-orange-500">${course.discountPrice}</span>
-                <span className="text-sm text-gray-400 line-through">${course.price}</span>
+                <span className="text-lg font-bold text-orange-500">₹{course.discountPrice}</span>
+                <span className="text-sm text-gray-400 line-through">₹{course.price}</span>
               </>
             ) : (
-              <span className="text-lg font-bold text-orange-500">${course.price}</span>
+              <span className="text-lg font-bold text-orange-500">₹{course.price}</span>
             )}
           </div>
           <Link href={`/courses/${course.id || course._id}`}>

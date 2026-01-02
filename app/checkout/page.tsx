@@ -133,7 +133,7 @@ export default function CheckoutPage() {
                     ) : (
                       <>
                         <Lock className="mr-2 h-4 w-4" />
-                        Pay ${course.price.toFixed(2)}
+                        Pay ₹{course.price.toFixed(2)}
                       </>
                     )}
                   </Button>
@@ -170,11 +170,11 @@ export default function CheckoutPage() {
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Original Price</span>
-                    <span className="line-through text-muted-foreground">${course.originalPrice.toFixed(2)}</span>
+                    <span className="line-through text-muted-foreground">₹{course.originalPrice.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Discount</span>
-                    <span className="text-green-500">-${(course.originalPrice - course.price).toFixed(2)}</span>
+                    <span className="text-green-500">-₹{(course.originalPrice - course.price).toFixed(2)}</span>
                   </div>
                 </div>
 
@@ -182,7 +182,7 @@ export default function CheckoutPage() {
 
                 <div className="flex justify-between font-semibold">
                   <span>Total</span>
-                  <span>${course.price.toFixed(2)}</span>
+                  <span>₹{course.price.toFixed(2)}</span>
                 </div>
 
                 <div className="rounded-lg bg-muted/50 p-4 space-y-2">

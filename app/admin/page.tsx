@@ -93,7 +93,7 @@ export default function AdminDashboardPage() {
     },
     {
       label: "Total Revenue",
-      value: `$${stats.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      value: `₹${stats.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
       icon: DollarSign,
       color: "text-green-600",
       bg: "bg-green-100",

@@ -119,7 +119,7 @@ export default function AdminCoursesPage() {
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-1">{course.title}</h3>
               <p className="text-sm text-gray-500 mb-2">By {course.instructor?.name}</p>
-              <p className="font-bold text-gray-900">${course.price}</p>
+              <p className="font-bold text-gray-900">₹{course.price}</p>
             </div>
 
             <div className="flex items-center gap-2 mt-4 md:mt-0 border-t md:border-t-0 pt-4 md:pt-0">

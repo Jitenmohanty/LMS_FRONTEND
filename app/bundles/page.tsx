@@ -121,10 +121,10 @@ export default function BundlesPage() {
                         <div className="flex items-center justify-between pt-4 border-t">
                           <div>
                             <div className="flex items-center gap-2">
-                              <span className="text-2xl font-bold text-primary">${bundle.discountPrice}</span>
-                              <span className="text-lg text-muted-foreground line-through">${bundle.price}</span>
+                              <span className="text-2xl font-bold text-primary">₹{bundle.discountPrice}</span>
+                              <span className="text-lg text-muted-foreground line-through">₹{bundle.price}</span>
                             </div>
-                            <p className="text-sm text-green-600">You save ${savings.toFixed(2)}</p>
+                            <p className="text-sm text-green-600">You save ₹{savings.toFixed(2)}</p>
                           </div>
                           <Link href={`/bundles/${bundle.id}`}>
                             <Button className="rounded-full px-6">Get Bundle</Button>
