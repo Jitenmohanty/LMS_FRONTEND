@@ -102,7 +102,7 @@ export default function AdminDashboardPage() {
   ]
 
   return (
-    <div className="p-6 space-y-8 max-w-7xl mx-auto">
+    <div className="p-6 lg:p-12 space-y-8 max-w-7xl mx-auto">
       <div>
         <h2 className="text-3xl font-bold text-gray-900">Dashboard Overview</h2>
         <p className="text-gray-500">Welcome to your admin control center.</p>

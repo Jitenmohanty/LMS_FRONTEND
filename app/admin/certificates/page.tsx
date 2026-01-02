@@ -82,7 +82,7 @@ export default function AdminCertificatesPage() {
     }
 
     return (
-        <div className="p-6 space-y-6">
+        <div className="p-6 space-y-6 lg:p-12">
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold tracking-tight">Certificates</h1>

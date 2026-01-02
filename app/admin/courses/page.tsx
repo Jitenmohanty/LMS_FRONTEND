@@ -65,7 +65,7 @@ export default function AdminCoursesPage() {
   if (isLoading) return <AdminCourseSkeleton />
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 lg:p-12">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Course Management</h2>

@@ -72,7 +72,7 @@ export default function AdminPaymentsPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-6 lg:p-12">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Transactions</h1>

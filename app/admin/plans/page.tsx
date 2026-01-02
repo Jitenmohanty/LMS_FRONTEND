@@ -165,7 +165,7 @@ export default function PlansPage() {
     }
 
     return (
-        <div className="p-6 space-y-6">
+        <div className="p-6 space-y-6 lg:p-12">
             <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-bold tracking-tight">Subscription Plans</h1>
                 <Dialog open={isDialogOpen} onOpenChange={(open) => {

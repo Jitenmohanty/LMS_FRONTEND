@@ -96,7 +96,7 @@ export default function CreateCoursePage() {
     }
 
     return (
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-3xl mx-auto lg:p-12">
             <div className="mb-6">
                 <h2 className="text-2xl font-bold text-gray-900">Create New Course</h2>
                 <p className="text-gray-500">Add a new course to your catalog.</p>

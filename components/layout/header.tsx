@@ -184,6 +184,14 @@ export function Header() {
                         Dashboard
                       </Button>
                     </Link>
+                    {user?.role === "admin" && (
+                      <Link href="/admin" onClick={() => setMobileMenuOpen(false)}>
+                        <Button variant="outline" className="w-full justify-start border-gray-200 hover:bg-gray-50 hover:text-gray-900 mt-2">
+                          <Settings className="w-4 h-4 mr-2 text-orange-500" />
+                          Admin Panel
+                        </Button>
+                      </Link>
+                    )}
                     <Button
                       variant="destructive"
                       onClick={() => { logout(); setMobileMenuOpen(false); }}
