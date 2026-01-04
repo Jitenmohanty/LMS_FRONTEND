@@ -224,6 +224,7 @@ export const uploadAPI = {
     headers: { "Content-Type": "multipart/form-data" },
   }),
   getVideoStreamUrl: (key: string) => api.get(`/api/upload/video/stream/${key}`),
+  getUploadSignature: (folder?: string) => api.get("/api/upload/signature", { params: { folder } }),
 }
 
 // Contact API

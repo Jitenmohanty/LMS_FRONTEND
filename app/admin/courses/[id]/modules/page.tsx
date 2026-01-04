@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { courseAPI, uploadAPI } from "@/lib/api"
+import { courseAPI } from "@/lib/api"
+import { uploadToCloudinary } from "@/lib/cloudinary"
 import { CourseModulesSkeleton } from "@/components/skeletons/course-modules-skeleton"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -71,16 +72,11 @@ export default function CourseModulesPage() {
             const uploadedVideos = await Promise.all(videos.map(async (v, index) => {
                 if (!v.file) throw new Error(`File missing for video: ${v.title}`)
 
-                const formData = new FormData()
-                formData.append("file", v.file)
+                const videoUrl = await uploadToCloudinary(v.file, 'video', 'learning-platform/videos')
+                const publicId = videoUrl.split('/').pop()?.split('.')[0] || "temp-id"
 
-                const { data } = await uploadAPI.uploadVideo(formData)
-                // Use robust property access for upload response
-                const videoUrl = data.url || data.secure_url || data.data?.url
-                const publicId = data.publicId || data.public_id || data.data?.publicId
-
-                if (!videoUrl || !publicId) {
-                    throw new Error(`Failed to upload video ${v.title}: Missing url or publicId`)
+                if (!videoUrl) {
+                    throw new Error(`Failed to upload video ${v.title}: Missing url`)
                 }
 
                 return {

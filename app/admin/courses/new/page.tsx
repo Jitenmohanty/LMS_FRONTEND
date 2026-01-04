@@ -2,7 +2,8 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { courseAPI, uploadAPI } from "@/lib/api"
+import { courseAPI } from "@/lib/api"
+import { uploadToCloudinary } from "@/lib/cloudinary"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -47,18 +48,10 @@ export default function CreateCoursePage() {
 
         try {
             // 1. Upload Thumbnail
-            const imageFormData = new FormData()
-            imageFormData.append("file", thumbnailFile)
-
-            const { data: uploadData } = await uploadAPI.uploadImage(imageFormData)
-            const thumbnailUrl = uploadData.url || uploadData.fileUrl || uploadData.data?.url // Robust check
+            const thumbnailUrl = await uploadToCloudinary(thumbnailFile, 'image', 'learning-platform/courses/thumbnails')
 
             // 2. Upload Banner
-            const bannerFormData = new FormData()
-            bannerFormData.append("file", bannerFile)
-
-            const { data: bannerData } = await uploadAPI.uploadImage(bannerFormData)
-            const bannerUrl = bannerData.url || bannerData.fileUrl || bannerData.data?.url // Robust check
+            const bannerUrl = await uploadToCloudinary(bannerFile, 'image', 'learning-platform/courses/banners')
 
             if (!thumbnailUrl || !bannerUrl) {
                 throw new Error("Failed to get image URLs from upload response")
@@ -128,7 +121,7 @@ export default function CreateCoursePage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                        <Label htmlFor="price">Price ($)</Label>
+                        <Label htmlFor="price">Price (₹)</Label>
                         <Input
                             id="price"
                             type="number"
@@ -139,7 +132,7 @@ export default function CreateCoursePage() {
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="discountPrice">Discount Price ($)</Label>
+                        <Label htmlFor="discountPrice">Discount Price (₹)</Label>
                         <Input
                             id="discountPrice"
                             type="number"
