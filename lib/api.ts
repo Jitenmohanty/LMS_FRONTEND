@@ -112,7 +112,7 @@ export const authAPI = {
   verifyEmail: (data: { email: string; otp: string }) => api.post("/api/auth/verify-email", data),
   resendOtp: (data: { email: string }) => api.post("/api/auth/resend-otp", data),
   forgotPassword: (data: { email: string }) => api.post("/api/auth/forgot-password", data),
-  resetPassword: (data: { email: string; otp: string; newPassword: string }) => api.post("/api/auth/reset-password", data),
+  resetPassword: (data: { email: string; otp: string; newPassword: string }) => api.post("/api/auth/reset-password", { token: data.otp, password: data.newPassword, email: data.email }),
   changePassword: (data: { oldPassword: string; newPassword: string }) => api.post("/api/auth/change-password", data),
 }
 
