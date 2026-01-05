@@ -28,34 +28,37 @@ export default function MyCoursesPage() {
       // But we can depend on allCourses changing.
 
       try {
-        const { data } = await progressAPI.getContinueLearning()
-        const progressMap = new Map<string, number>()
+        const enrolled = allCourses.filter((c) => c.isEnrolled)
 
-        const courses = data.data?.courses || data.courses || []
-        if (Array.isArray(courses)) {
-          courses.forEach((item: any) => {
-            const courseId = item.course?._id || item.course?.id
-            if (courseId) {
-              progressMap.set(courseId, item.progressPercentage || 0)
+        const progressPromises = enrolled.map(async (course) => {
+          try {
+            const { data } = await progressAPI.getCourseProgress(course.id)
+            // Handle different potential response structures
+            // data.data (axios) -> progress -> progressPercentage
+            const progressData = data.data?.progress || data.progress
+            return {
+              id: course.id,
+              progress: progressData?.progressPercentage || 0,
             }
-          })
-        }
+          } catch (err) {
+            console.error(`Failed to fetch progress for course ${course.id}`, err)
+            return { id: course.id, progress: 0 }
+          }
+        })
 
-        // Filter enrolled courses and attach progress
-        const enrolled = allCourses
-          .filter(c => c.isEnrolled)
-          .map(c => ({
-            ...c,
-            progress: progressMap.get(c.id) || 0
-          }))
+        const progressResults = await Promise.all(progressPromises)
+        const progressMap = new Map(progressResults.map((p) => [p.id, p.progress]))
 
-        setEnrolledCourses(enrolled)
+        const enrolledWithProgress = enrolled.map((c) => ({
+          ...c,
+          progress: progressMap.get(c.id) || 0,
+        }))
+
+        setEnrolledCourses(enrolledWithProgress)
       } catch (error) {
         console.error("Failed to fetch progress:", error)
         // Fallback: show enrolled courses with 0 progress if API fails
-        const enrolled = allCourses
-          .filter(c => c.isEnrolled)
-          .map(c => ({ ...c, progress: 0 }))
+        const enrolled = allCourses.filter((c) => c.isEnrolled).map((c) => ({ ...c, progress: 0 }))
         setEnrolledCourses(enrolled)
       } finally {
         setIsLoading(false)

@@ -30,8 +30,17 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
 
   const [initialTime, setInitialTime] = useState(0)
 
+  // Ref to track if we've already loaded this course to prevent duplicate calls
+  const lastLoadedId = useRef<string | null>(null)
+
   useEffect(() => {
     const loadCourseAndProgress = async () => {
+      // If we're already loading this exact ID, skip
+      // This helps with double-invocation in Strict Mode or re-renders
+      if (lastLoadedId.current === id) return
+
+      lastLoadedId.current = id
+
       // Fetch course details
       const course = await getCourseDetails(id)
 
@@ -58,29 +67,23 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
 
         // Fetch user progress specifically
         try {
-          const { data } = await progressAPI.getContinueLearning()
-          const continueCourses = data.data?.courses || data.courses || []
+          const { data } = await progressAPI.getCourseProgress(id)
+          const progressData = data.data?.progress || data.progress
 
-          // Find progress for current course
-          // Normalize IDs for comparison
-          const currentCourseProgress = continueCourses.find((c: any) =>
-            (c.course?._id || c.course?.id) === (course._id || course.id)
-          )
-
-          if (currentCourseProgress) {
+          if (progressData) {
             // Set completed videos
-            if (Array.isArray(currentCourseProgress.completedVideos)) {
-              currentCourseProgress.completedVideos.forEach((vId: string) => completed.add(vId))
+            if (Array.isArray(progressData.completedVideos)) {
+              progressData.completedVideos.forEach((vId: string) => completed.add(vId))
             }
 
             // Set last watched
-            if (currentCourseProgress.lastWatchedVideo) {
-              lastWatchedVideoId = currentCourseProgress.lastWatchedVideo
+            if (progressData.lastWatchedVideo) {
+              lastWatchedVideoId = progressData.lastWatchedVideo
             }
 
             // Set timestamp
-            if (currentCourseProgress.lastVideoTimestamp) {
-              lastVideoTimestamp = currentCourseProgress.lastVideoTimestamp
+            if (progressData.lastVideoTimestamp) {
+              lastVideoTimestamp = progressData.lastVideoTimestamp
             }
           }
         } catch (error) {
@@ -139,6 +142,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
       loadCourseAndProgress()
     }
   }, [id, getCourseDetails, fetchVideoUrl, user, authLoading, router])
+
 
   const handleVideoSelect = async (video: Video, moduleId: string) => {
     setActiveVideo(video)
