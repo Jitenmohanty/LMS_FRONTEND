@@ -156,6 +156,7 @@ export const videoAPI = {
 export const progressAPI = {
   markProgress: (courseId: string, videoId: string) => api.post(`/api/progress/${courseId}/${videoId}`),
   getContinueLearning: () => api.get("/api/progress/continue-learning"),
+  getCourseProgress: (courseId: string) => api.get(`/api/progress/${courseId}`),
   sendHeartbeat: (courseId: string, videoId: string, timestamp: number) =>
     api.post(`/api/progress/heartbeat/${courseId}/${videoId}`, { timestamp }),
 }
