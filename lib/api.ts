@@ -136,8 +136,27 @@ export const courseAPI = {
   create: (data: any) => api.post("/api/courses", data),
   update: (id: string, data: any) => api.put(`/api/courses/${id}`, data),
   delete: (id: string) => api.delete(`/api/courses/${id}`),
+  
+  // Module management
   addModule: (id: string, data: any) => api.post(`/api/courses/${id}/modules`, data),
-  addVideo: (courseId: string, moduleId: string, data: any) => api.post(`/api/courses/${courseId}/modules/${moduleId}/videos`, data),
+  updateModule: (courseId: string, moduleId: string, data: any) => 
+    api.put(`/api/courses/${courseId}/modules/${moduleId}`, data),
+  deleteModule: (courseId: string, moduleId: string) => 
+    api.delete(`/api/courses/${courseId}/modules/${moduleId}`),
+  reorderModules: (courseId: string, moduleOrders: Array<{moduleId: string, order: number}>) => 
+    api.put(`/api/courses/${courseId}/modules/reorder`, { moduleOrders }),
+  
+  // Video management
+  addVideo: (courseId: string, moduleId: string, data: any) => 
+    api.post(`/api/courses/${courseId}/modules/${moduleId}/videos`, data),
+  updateVideo: (courseId: string, moduleId: string, videoId: string, data: any) => 
+    api.put(`/api/courses/${courseId}/modules/${moduleId}/videos/${videoId}`, data),
+  deleteVideo: (courseId: string, moduleId: string, videoId: string) => 
+    api.delete(`/api/courses/${courseId}/modules/${moduleId}/videos/${videoId}`),
+  reorderVideos: (courseId: string, moduleId: string, videoOrders: Array<{videoId: string, order: number}>) => 
+    api.put(`/api/courses/${courseId}/modules/${moduleId}/videos/reorder`, { videoOrders }),
+  
+  // Other
   search: (query: string) => api.get(`/api/search?query=${query}`),
   enroll: (courseId: string, data: { userId: string; paymentId?: string }) => api.post(`/api/courses/${courseId}/enroll`, data),
 }
