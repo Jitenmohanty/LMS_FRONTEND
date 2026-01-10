@@ -61,6 +61,7 @@ interface CourseContextType {
   isLoading: boolean
   getCourses: (params?: { category?: string; search?: string }) => Promise<void>
   getCourseDetails: (id: string) => Promise<Course>
+  getCourseContent: (id: string) => Promise<Course> // New authenticated endpoint
   fetchVideoUrl: (key: string) => Promise<string>
   markProgress: (courseId: string, videoId: string) => Promise<any>
   setActiveCourse: (course: Course | null) => void
@@ -135,6 +136,44 @@ export function CourseProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
+  // New method for authenticated content access (includes video URLs)
+  const getCourseContent = useCallback(async (id: string): Promise<Course> => {
+    setIsLoading(true)
+    try {
+      const { data } = await courseAPI.getCourseContent(id)
+      const normalizeCourse = (course: any): Course => ({
+        ...course,
+        id: course._id || course.id,
+        modules: course.modules?.map((m: any) => ({
+          ...m,
+          id: m._id || m.id,
+          videos: m.videos?.map((v: any) => ({
+            ...v,
+            id: v._id || v.id
+          })) || []
+        })) || []
+      })
+
+      const courseData = data.data?.course || data.course || data
+      const normalizedCourse = normalizeCourse(courseData)
+      setActiveCourse(normalizedCourse)
+      return normalizedCourse
+    } catch (error: any) {
+      console.error("Failed to fetch course content:", error)
+      setActiveCourse(null)
+      // Re-throw with more specific error info
+      if (error.response?.status === 403) {
+        throw new Error('NOT_ENROLLED')
+      }
+      if (error.response?.status === 401) {
+        throw new Error('NOT_AUTHENTICATED')
+      }
+      throw error
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
   const fetchVideoUrl = useCallback(async (url: string): Promise<string> => {
     setActiveVideoUrl(url)
     return url
@@ -188,6 +227,7 @@ export function CourseProvider({ children }: { children: ReactNode }) {
         isLoading,
         getCourses,
         getCourseDetails,
+        getCourseContent,
         fetchVideoUrl,
         markProgress,
         setActiveCourse,

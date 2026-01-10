@@ -19,7 +19,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
   const router = useRouter()
   const { toast } = useToast()
   const { user, isLoading: authLoading } = useAuth()
-  const { getCourseDetails, activeCourse, fetchVideoUrl, markProgress, isLoading: courseLoading } = useCourses()
+  const { getCourseDetails, getCourseContent, activeCourse, fetchVideoUrl, markProgress, isLoading: courseLoading } = useCourses()
   const isLoading = authLoading || courseLoading
   const [videoUrl, setVideoUrl] = useState<string | null>(null)
   const [activeVideo, setActiveVideo] = useState<Video | null>(null)
@@ -41,99 +41,127 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
 
       lastLoadedId.current = id
 
-      // Fetch course details
-      const course = await getCourseDetails(id)
+      try {
+        // Use getCourseContent for authenticated video URL access
+        const course = await getCourseContent(id)
 
-      if (course) {
-        if (!authLoading && !canAccessCourse(user, course)) {
-          router.replace(`/courses/${id}`)
-          return
+        if (course) {
+          if (!authLoading && !canAccessCourse(user, course)) {
+            router.replace(`/courses/${id}`)
+            return
+          }
+
+          const totalVideos = course.modules?.reduce((acc, m) => acc + m.videos.length, 0) || 0
+          if (totalVideos === 0) {
+            toast({
+              title: "No videos added yet",
+              description: "Please check back later.",
+              variant: "default",
+            })
+            router.replace(`/courses/${id}`)
+            return
+          }
+
+          let completed = new Set<string>()
+          let lastWatchedVideoId: string | undefined
+          let lastVideoTimestamp = 0
+
+          // Fetch user progress specifically
+          try {
+            const { data } = await progressAPI.getCourseProgress(id)
+            const progressData = data.data?.progress || data.progress
+
+            if (progressData) {
+              // Set completed videos
+              if (Array.isArray(progressData.completedVideos)) {
+                progressData.completedVideos.forEach((vId: string) => completed.add(vId))
+              }
+
+              // Set last watched
+              if (progressData.lastWatchedVideo) {
+                lastWatchedVideoId = progressData.lastWatchedVideo
+              }
+
+              // Set timestamp
+              if (progressData.lastVideoTimestamp) {
+                lastVideoTimestamp = progressData.lastVideoTimestamp
+              }
+            }
+          } catch (error) {
+            console.error("Failed to load progress:", error)
+          }
+
+          setCompletedVideos(completed)
+          setInitialTime(lastVideoTimestamp)
+
+          // Logic to determine active video:
+          let targetVideo: Video | undefined
+          let targetModuleId: string | undefined
+
+          // 1. Try last watched video from progress
+          if (lastWatchedVideoId) {
+            for (const m of course.modules || []) {
+              const v = m.videos.find(v => v.id === lastWatchedVideoId || (v as any)._id === lastWatchedVideoId)
+              if (v) {
+                targetVideo = v
+                targetModuleId = m.id
+                break
+              }
+            }
+          }
+
+          // 2. Fallback: Find first uncompleted
+          if (!targetVideo) {
+            for (const m of course.modules || []) {
+              const uncompleted = m.videos.find(v => !completed.has(v.id || (v as any)._id))
+              if (uncompleted) {
+                targetVideo = uncompleted
+                targetModuleId = m.id
+                break
+              }
+            }
+          }
+
+          // 3. Fallback: First video of course
+          if (!targetVideo && course.modules?.[0]?.videos?.[0]) {
+            targetVideo = course.modules[0].videos[0]
+            targetModuleId = course.modules[0].id
+          }
+
+          // Set active state
+          if (targetVideo && targetModuleId) {
+            setActiveVideo(targetVideo)
+            setActiveModuleId(targetModuleId)
+            setExpandedModules(new Set([targetModuleId])) // Expand the active module
+            const url = await fetchVideoUrl(targetVideo.videoUrl || targetVideo.key || "")
+            setVideoUrl(url)
+          }
         }
+      } catch (error: any) {
+        console.error("Failed to load course:", error)
 
-        const totalVideos = course.modules?.reduce((acc, m) => acc + m.videos.length, 0) || 0
-        if (totalVideos === 0) {
+        // Handle specific error cases
+        if (error.message === 'NOT_ENROLLED') {
           toast({
-            title: "No videos added yet",
-            description: "Please check back later.",
-            variant: "default",
+            title: "Enrollment Required",
+            description: "You must enroll in this course to access its content.",
+            variant: "destructive",
           })
           router.replace(`/courses/${id}`)
-          return
-        }
-
-        let completed = new Set<string>()
-        let lastWatchedVideoId: string | undefined
-        let lastVideoTimestamp = 0
-
-        // Fetch user progress specifically
-        try {
-          const { data } = await progressAPI.getCourseProgress(id)
-          const progressData = data.data?.progress || data.progress
-
-          if (progressData) {
-            // Set completed videos
-            if (Array.isArray(progressData.completedVideos)) {
-              progressData.completedVideos.forEach((vId: string) => completed.add(vId))
-            }
-
-            // Set last watched
-            if (progressData.lastWatchedVideo) {
-              lastWatchedVideoId = progressData.lastWatchedVideo
-            }
-
-            // Set timestamp
-            if (progressData.lastVideoTimestamp) {
-              lastVideoTimestamp = progressData.lastVideoTimestamp
-            }
-          }
-        } catch (error) {
-          console.error("Failed to load progress:", error)
-        }
-
-        setCompletedVideos(completed)
-        setInitialTime(lastVideoTimestamp)
-
-        // Logic to determine active video:
-        let targetVideo: Video | undefined
-        let targetModuleId: string | undefined
-
-        // 1. Try last watched video from progress
-        if (lastWatchedVideoId) {
-          for (const m of course.modules || []) {
-            const v = m.videos.find(v => v.id === lastWatchedVideoId || (v as any)._id === lastWatchedVideoId)
-            if (v) {
-              targetVideo = v
-              targetModuleId = m.id
-              break
-            }
-          }
-        }
-
-        // 2. Fallback: Find first uncompleted
-        if (!targetVideo) {
-          for (const m of course.modules || []) {
-            const uncompleted = m.videos.find(v => !completed.has(v.id || (v as any)._id))
-            if (uncompleted) {
-              targetVideo = uncompleted
-              targetModuleId = m.id
-              break
-            }
-          }
-        }
-
-        // 3. Fallback: First video of course
-        if (!targetVideo && course.modules?.[0]?.videos?.[0]) {
-          targetVideo = course.modules[0].videos[0]
-          targetModuleId = course.modules[0].id
-        }
-
-        // Set active state
-        if (targetVideo && targetModuleId) {
-          setActiveVideo(targetVideo)
-          setActiveModuleId(targetModuleId)
-          setExpandedModules(new Set([targetModuleId])) // Expand the active module
-          const url = await fetchVideoUrl(targetVideo.videoUrl || targetVideo.key || "")
-          setVideoUrl(url)
+        } else if (error.message === 'NOT_AUTHENTICATED') {
+          toast({
+            title: "Authentication Required",
+            description: "Please login to continue.",
+            variant: "destructive",
+          })
+          router.replace(`/login?redirect=/courses/${id}/learn`)
+        } else {
+          toast({
+            title: "Error",
+            description: "Failed to load course content. Please try again.",
+            variant: "destructive",
+          })
+          router.replace('/dashboard/courses')
         }
       }
     }
@@ -141,7 +169,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
     if (!authLoading) {
       loadCourseAndProgress()
     }
-  }, [id, getCourseDetails, fetchVideoUrl, user, authLoading, router])
+  }, [id, getCourseContent, fetchVideoUrl, user, authLoading, router, toast])
 
 
   const handleVideoSelect = async (video: Video, moduleId: string) => {

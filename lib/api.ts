@@ -133,6 +133,7 @@ export const userAPI = {
 export const courseAPI = {
   getAll: (params?: { category?: string; search?: string }) => api.get("/api/courses", { params }),
   getById: (id: string) => api.get(`/api/courses/${id}`),
+  getCourseContent: (id: string) => api.get(`/api/courses/${id}/content`), // Authenticated endpoint with video URLs
   create: (data: any) => api.post("/api/courses", data),
   update: (id: string, data: any) => api.put(`/api/courses/${id}`, data),
   delete: (id: string) => api.delete(`/api/courses/${id}`),

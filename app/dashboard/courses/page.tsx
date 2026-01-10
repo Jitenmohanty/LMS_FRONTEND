@@ -155,7 +155,7 @@ function CourseList({ courses }: { courses: (Course & { progress: number })[] })
 
               <div className="flex items-center gap-3 mb-3">
                 <Progress value={course.progress} className="flex-1 h-2" />
-                <span className="text-sm font-medium text-gray-600">{course.progress}%</span>
+                <span className="text-sm font-medium text-gray-600">{course?.progress?.toFixed(2)}%</span>
               </div>
 
               <div className="flex items-center justify-between">

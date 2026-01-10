@@ -157,7 +157,7 @@ export default function DashboardPage() {
                       <h3 className="font-medium text-gray-900 truncate">{course.title}</h3>
                       <div className="flex items-center gap-3 mt-2">
                         <Progress value={course.progressPercentage} className="flex-1 h-2" />
-                        <span className="text-sm font-medium text-gray-600">{course.progressPercentage}%</span>
+                        <span className="text-sm font-medium text-gray-600">{course.progressPercentage.toFixed(2)}%</span>
                       </div>
                     </div>
                     <Button
