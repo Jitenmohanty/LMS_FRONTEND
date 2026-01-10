@@ -8,10 +8,10 @@ export interface Certificate {
     name: string
     email?: string
   }
-  course: {
+  course?: {
     _id: string
     title: string
     thumbnail?: string
-  }
+  } | null
   pdfUrl?: string
 }

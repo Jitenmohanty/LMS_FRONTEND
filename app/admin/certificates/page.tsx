@@ -66,12 +66,12 @@ export default function AdminCertificatesPage() {
         window.open(certificateAPI.downloadCertificate(cert.certificateId), "_blank")
     }
 
-    const filteredCertificates = certificates.filter(
+    const filteredCertificates = certificates.filter(cert => cert.course).filter(
         (cert) =>
             (cert.user as any).name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
             (cert.user as any).email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (cert.course as any).title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (cert.certificateId as any)?.toLowerCase().includes(searchQuery.toLowerCase())
+            cert.course?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            cert.certificateId?.toLowerCase().includes(searchQuery.toLowerCase())
     )
 
     if (authLoading || loading) {
@@ -131,8 +131,8 @@ export default function AdminCertificatesPage() {
                                                 <span className="text-xs text-muted-foreground">{(cert.user as any).email || ''}</span>
                                             </div>
                                         </TableCell>
-                                        <TableCell className="max-w-[200px] truncate" title={cert.course.title}>
-                                            {cert.course.title}
+                                        <TableCell className="max-w-[200px] truncate" title={cert.course?.title || 'Unknown'}>
+                                            {cert.course?.title || 'Unknown'}
                                         </TableCell>
                                         <TableCell>{new Date(cert.issueDate).toLocaleDateString()}</TableCell>
                                         <TableCell>

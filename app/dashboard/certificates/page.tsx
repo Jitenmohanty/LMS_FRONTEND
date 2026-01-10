@@ -103,10 +103,10 @@ export default function CertificatesPage() {
                 </div>
             ) : Array.isArray(certificates) ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {certificates.map((cert) => (
+                    {certificates.filter(cert => cert.course).map((cert) => (
                         <Card key={cert._id} className="overflow-hidden hover:shadow-md transition-shadow">
                             <div className="aspect-video relative bg-slate-100">
-                                {cert.course.thumbnail ? (
+                                {cert.course?.thumbnail ? (
                                     <Image
                                         src={cert.course.thumbnail}
                                         alt={cert.course.title}
@@ -130,8 +130,8 @@ export default function CertificatesPage() {
                                 </div>
                             </div>
                             <CardHeader className="p-4 pb-2">
-                                <CardTitle className="line-clamp-1 text-lg" title={cert.course.title}>
-                                    {cert.course.title}
+                                <CardTitle className="line-clamp-1 text-lg" title={cert.course?.title || 'Certificate'}>
+                                    {cert.course?.title || 'Certificate'}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="p-4 pt-0 text-sm text-gray-500 space-y-2">
