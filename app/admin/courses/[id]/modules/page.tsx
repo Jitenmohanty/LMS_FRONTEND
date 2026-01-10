@@ -121,7 +121,7 @@ export default function CourseModulesPage() {
                     description: v.description || "",
                     videoUrl: videoUrl,
                     publicId: publicId,
-                    duration: 0, // Backend requires Number. Default to 0 as upload doesn't return duration.
+                    duration: 1, // Backend requires Number > 0. Default to 1 as upload doesn't return duration.
                     order: index + 1
                 }
             }))

@@ -194,7 +194,7 @@ export default function EditCoursePage({ params }: { params: Promise<{ id: strin
                 description: videoForm.description,
                 videoUrl,
                 publicId,
-                duration: 0, // Backend might calculate/update later
+                duration: 1, // Backend requires Number > 0
                 isFreePreview: videoForm.isFreePreview,
                 order
             })

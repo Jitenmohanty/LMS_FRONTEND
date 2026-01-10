@@ -66,7 +66,7 @@ export default function CreateCoursePage() {
                 discountPrice: formData.discountPrice ? parseFloat(formData.discountPrice) : 0,
                 thumbnail: thumbnailUrl,
                 banner: bannerUrl,
-                duration: 0, // Default duration, will update as videos are added
+                duration: 1, // Default duration > 0 required by backend validation
                 enrollmentCount: 0,
                 tags: [] // Add tags logic if needed later
             }
