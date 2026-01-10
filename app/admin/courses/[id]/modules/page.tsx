@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
+import Image from "next/image"
 import { courseAPI } from "@/lib/api"
 import { uploadToCloudinary } from "@/lib/cloudinary"
 import { CourseModulesSkeleton } from "@/components/skeletons/course-modules-skeleton"
@@ -33,7 +34,10 @@ export default function CourseModulesPage() {
     useEffect(() => {
         if (typeof id === 'string') {
             courseAPI.getById(id).then(({ data }) => {
-                setCourse(data.course || data)
+                // Handle nested response structure: { success: true, data: { course: {...} } }
+                const courseData = data.data?.course || data.course || data
+                console.log('Loaded course data:', courseData)
+                setCourse(courseData)
             }).catch(err => console.error("Failed to load course", err))
         }
     }, [id])
@@ -190,13 +194,92 @@ export default function CourseModulesPage() {
             {/* Existing Modules List (Read-only view for reference) */}
             <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Existing Modules</h3>
-                {course.modules?.map((mod: any) => (
-                    <div key={mod.id || mod._id} className="bg-white p-4 rounded-lg border border-gray-100">
-                        <h4 className="font-medium">{mod.title}</h4>
-                        <p className="text-sm text-gray-500">{mod.videos?.length || 0} videos</p>
+                {course.modules && course.modules.length > 0 ? (
+                    course.modules.map((mod: any, modIndex: number) => (
+                        <div key={mod.id || mod._id} className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm space-y-3">
+                            <div className="flex items-center justify-between">
+                                <h4 className="font-semibold text-gray-900">
+                                    Module {modIndex + 1}: {mod.title}
+                                </h4>
+                                <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                                    {mod.videos?.length || 0} video{mod.videos?.length !== 1 ? 's' : ''}
+                                </span>
+                            </div>
+
+
+                            {/* Display videos in this module */}
+                            {mod.videos && mod.videos.length > 0 ? (
+                                <div className="space-y-3 pl-4 border-l-2 border-gray-200">
+                                    {mod.videos.map((video: any, vidIndex: number) => {
+                                        // Generate thumbnail URL from Cloudinary video URL
+                                        const getThumbnailUrl = (videoUrl: string) => {
+                                            if (!videoUrl) return null
+                                            // Convert video URL to thumbnail by replacing /upload/ with /upload/so_0/
+                                            // This gets the first frame of the video as thumbnail
+                                            return videoUrl.replace('/upload/', '/upload/so_0,w_200,h_112,c_fill/')
+                                                .replace('.mp4', '.jpg')
+                                        }
+
+                                        const thumbnailUrl = getThumbnailUrl(video.videoUrl)
+
+                                        return (
+                                            <div
+                                                key={video._id || vidIndex}
+                                                className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                                            >
+                                                {/* Video Thumbnail */}
+                                                <div className="flex-shrink-0 w-28 h-16 bg-gray-200 rounded overflow-hidden relative">
+                                                    {thumbnailUrl ? (
+                                                        <Image
+                                                            src={thumbnailUrl}
+                                                            alt={video.title}
+                                                            fill
+                                                            className="object-cover"
+                                                            unoptimized
+                                                        />
+                                                    ) : (
+                                                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-100 to-orange-50">
+                                                            <Video className="w-8 h-8 text-orange-300" />
+                                                        </div>
+                                                    )}
+                                                    {/* Play icon overlay */}
+                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                                                        <div className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center">
+                                                            <div className="w-0 h-0 border-t-4 border-t-transparent border-l-6 border-l-orange-500 border-b-4 border-b-transparent ml-0.5" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Video Info */}
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="font-medium text-sm text-gray-900 truncate">
+                                                        {vidIndex + 1}. {video.title}
+                                                    </p>
+                                                    {video.description && (
+                                                        <p className="text-xs text-gray-500 line-clamp-2 mt-1">
+                                                            {video.description}
+                                                        </p>
+                                                    )}
+                                                    {video.publicId && (
+                                                        <p className="text-xs text-gray-400 mt-1 font-mono truncate">
+                                                            ID: {video.publicId}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            ) : (
+                                <p className="text-sm text-gray-400 italic pl-4">No videos in this module</p>
+                            )}
+                        </div>
+                    ))
+                ) : (
+                    <div className="text-center py-8 bg-gray-50 rounded-lg border border-dashed border-gray-200">
+                        <p className="text-gray-500">No modules yet.</p>
                     </div>
-                ))}
-                {!course.modules?.length && <p className="text-gray-500">No modules yet.</p>}
+                )}
             </div>
         </div>
     )
