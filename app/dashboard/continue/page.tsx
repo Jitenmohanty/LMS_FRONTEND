@@ -127,7 +127,7 @@ export default function ContinueLearningPage() {
                                                 : `${course.completedVideos} Videos Completed`
                                             }
                                         </span>
-                                        <span className="font-medium text-orange-600">{course.progressPercentage}%</span>
+                                        <span className="font-medium text-orange-600">{course.progressPercentage.toFixed(2)}%</span>
                                     </div>
                                     <Progress value={course.progressPercentage} className="h-2" />
                                 </div>

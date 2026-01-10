@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useCourses, type Course } from "@/contexts/course-context"
@@ -17,6 +17,9 @@ export default function MyCoursesPage() {
   const [enrolledCourses, setEnrolledCourses] = useState<(Course & { progress: number })[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
+  // Track which courses we've already fetched progress for to prevent duplicate calls
+  const fetchedCoursesRef = useRef<Set<string>>(new Set())
+
   useEffect(() => {
     getCourses()
   }, [getCourses])
@@ -30,23 +33,39 @@ export default function MyCoursesPage() {
       try {
         const enrolled = allCourses.filter((c) => c.isEnrolled)
 
-        const progressPromises = enrolled.map(async (course) => {
+        // Filter out courses we've already fetched
+        const coursesToFetch = enrolled.filter(c => !fetchedCoursesRef.current.has(c.id))
+
+        if (coursesToFetch.length === 0 && enrolled.length > 0) {
+          // We already have all the data, just update state if needed
+          setIsLoading(false)
+          return
+        }
+
+        // Fetch progress sequentially with a small delay to avoid rate limiting
+        const progressResults = []
+        for (const course of coursesToFetch) {
           try {
             const { data } = await progressAPI.getCourseProgress(course.id)
             // Handle different potential response structures
-            // data.data (axios) -> progress -> progressPercentage
             const progressData = data.data?.progress || data.progress
-            return {
+            progressResults.push({
               id: course.id,
               progress: progressData?.progressPercentage || 0,
-            }
+            })
+            // Mark this course as fetched
+            fetchedCoursesRef.current.add(course.id)
           } catch (err) {
             console.error(`Failed to fetch progress for course ${course.id}`, err)
-            return { id: course.id, progress: 0 }
+            progressResults.push({ id: course.id, progress: 0 })
+            fetchedCoursesRef.current.add(course.id) // Mark as fetched even on error
           }
-        })
+          // Add a small delay between requests to avoid rate limiting
+          if (coursesToFetch.indexOf(course) < coursesToFetch.length - 1) {
+            await new Promise(resolve => setTimeout(resolve, 100))
+          }
+        }
 
-        const progressResults = await Promise.all(progressPromises)
         const progressMap = new Map(progressResults.map((p) => [p.id, p.progress]))
 
         const enrolledWithProgress = enrolled.map((c) => ({

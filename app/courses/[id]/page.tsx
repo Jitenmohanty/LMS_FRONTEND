@@ -178,7 +178,8 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
 
   const totalVideos = course.modules?.reduce((acc, mod) => acc + mod.videos.length, 0) || 12
   const totalDuration = course.duration || "12h 30m"
-  const isEnrolled = canAccessCourse(user, course)
+  // Check enrollment status from course data first (more reliable), then fall back to user check
+  const isEnrolled = course.isEnrolled || canAccessCourse(user, course)
 
   return (
     <div className="min-h-screen bg-background">
@@ -435,7 +436,7 @@ export default function CourseDetailPage({ params }: { params: Promise<{ id: str
                         <span className="text-3xl font-bold">₹{course.price}</span>
                       )}
                     </div>
-                      
+
                     {isEnrolled ? (
                       <Button
                         onClick={() => {
