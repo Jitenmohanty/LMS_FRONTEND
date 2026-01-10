@@ -64,6 +64,10 @@ export default function CourseModulesPage() {
     const [editVideoFile, setEditVideoFile] = useState<File | null>(null)
     const [deleteVideoDialog, setDeleteVideoDialog] = useState<{ open: boolean, videoId: string | null, moduleId: string | null }>({ open: false, videoId: null, moduleId: null })
 
+    // Add Video to Existing Module states
+    const [addVideoDialog, setAddVideoDialog] = useState<{ open: boolean, moduleId: string | null, moduleTitle: string }>({ open: false, moduleId: null, moduleTitle: "" })
+    const [addVideosToModule, setAddVideosToModule] = useState<PendingVideo[]>([])
+
     useEffect(() => {
         if (typeof id === 'string') {
             courseAPI.getById(id).then(({ data }) => {
@@ -286,6 +290,89 @@ export default function CourseModulesPage() {
         }
     }
 
+    // Add Video to Existing Module Handlers
+    const handleOpenAddVideoDialog = (moduleId: string, moduleTitle: string) => {
+        setAddVideoDialog({ open: true, moduleId, moduleTitle })
+        setAddVideosToModule([{ title: "", file: null, description: "" }])
+    }
+
+    const addVideoToModuleField = () => {
+        setAddVideosToModule([...addVideosToModule, { title: "", file: null, description: "" }])
+    }
+
+    const removeVideoFromModuleField = (index: number) => {
+        const newVideos = [...addVideosToModule]
+        newVideos.splice(index, 1)
+        setAddVideosToModule(newVideos)
+    }
+
+    const updateVideoToModuleField = (index: number, field: keyof PendingVideo, value: any) => {
+        const newVideos = [...addVideosToModule]
+        newVideos[index] = { ...newVideos[index], [field]: value }
+        setAddVideosToModule(newVideos)
+    }
+
+    const handleSubmitVideosToModule = async () => {
+        if (!addVideoDialog.moduleId || !id) return
+
+        if (addVideosToModule.length === 0) {
+            toast({ title: "Error", description: "Please add at least one video", variant: "destructive" })
+            return
+        }
+        if (addVideosToModule.some(v => !v.title.trim())) {
+            toast({ title: "Error", description: "All videos must have a title", variant: "destructive" })
+            return
+        }
+        if (addVideosToModule.some(v => !v.file)) {
+            toast({ title: "Error", description: "All videos must have a file", variant: "destructive" })
+            return
+        }
+
+        setIsSubmitting(true)
+        try {
+            // Upload and add each video to the module
+            for (let i = 0; i < addVideosToModule.length; i++) {
+                const v = addVideosToModule[i]
+
+                toast({ title: "Uploading", description: `Uploading video ${i + 1} of ${addVideosToModule.length}...` })
+
+                const videoUrl = await uploadToCloudinary(v.file!, 'video', 'learning-platform/videos')
+                const publicId = videoUrl.split('/').pop()?.split('.')[0] || "temp-id"
+
+                if (!videoUrl) {
+                    throw new Error(`Failed to upload video ${v.title}: Missing url`)
+                }
+
+                // Get current module to determine next order
+                const module = course?.modules?.find((m: any) => m._id === addVideoDialog.moduleId)
+                const nextOrder = (module?.videos?.length || 0) + i + 1
+
+                await courseAPI.addVideo(id as string, addVideoDialog.moduleId, {
+                    title: v.title,
+                    description: v.description || "",
+                    videoUrl: videoUrl,
+                    publicId: publicId,
+                    duration: 1,
+                    order: nextOrder
+                })
+            }
+
+            // Refresh course data
+            const { data } = await courseAPI.getById(id as string)
+            const courseData = data.data?.course || data.course || data
+            setCourse(courseData)
+
+            setAddVideoDialog({ open: false, moduleId: null, moduleTitle: "" })
+            setAddVideosToModule([])
+            toast({ title: "Success", description: "Videos added successfully!" })
+        } catch (error) {
+            console.error("Failed to add videos:", error)
+            toast({ title: "Error", description: "Failed to upload videos", variant: "destructive" })
+        } finally {
+            setIsSubmitting(false)
+        }
+    }
+
     if (!course) return <CourseModulesSkeleton />
 
     return (
@@ -484,7 +571,18 @@ export default function CourseModulesPage() {
                                         })}
                                     </div>
                                 ) : (
-                                    <p className="text-sm text-gray-400 italic pl-4">No videos in this module</p>
+                                    <div className="pl-4 py-3 flex items-center gap-3">
+                                        <p className="text-sm text-gray-400 italic">No videos in this module</p>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => handleOpenAddVideoDialog(mod._id, mod.title)}
+                                            className="text-orange-600 hover:text-orange-700 hover:bg-orange-50 border-orange-200"
+                                        >
+                                            <Plus className="w-4 h-4 mr-2" />
+                                            Add Video
+                                        </Button>
+                                    </div>
                                 )}
                             </div>
                         ))
@@ -636,6 +734,94 @@ export default function CourseModulesPage() {
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
+
+            {/* Add Video to Existing Module Dialog */}
+            <Dialog open={addVideoDialog.open} onOpenChange={(open) => !isSubmitting && setAddVideoDialog({ open, moduleId: null, moduleTitle: "" })}>
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                        <DialogTitle>Add Videos to Module</DialogTitle>
+                        <DialogDescription>
+                            Adding videos to: <span className="font-semibold">{addVideoDialog.moduleTitle}</span>
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                        <div className="flex justify-between items-center">
+                            <Label>Videos</Label>
+                            <Button type="button" onClick={addVideoToModuleField} variant="outline" size="sm">
+                                <Plus className="w-4 h-4 mr-2" />
+                                Add Another Video
+                            </Button>
+                        </div>
+
+                        {addVideosToModule.length === 0 && (
+                            <div className="text-center py-8 bg-gray-50 rounded-lg border border-dashed border-gray-200">
+                                <p className="text-gray-500 text-sm">No videos added yet. Click "Add Another Video" to start.</p>
+                            </div>
+                        )}
+
+                        {addVideosToModule.map((video, idx) => (
+                            <div key={idx} className="p-4 bg-gray-50 rounded-lg space-y-4 relative">
+                                {addVideosToModule.length > 1 && (
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        className="absolute top-2 right-2 text-red-500 hover:bg-red-50"
+                                        onClick={() => removeVideoFromModuleField(idx)}
+                                    >
+                                        <X className="w-4 h-4" />
+                                    </Button>
+                                )}
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pr-8">
+                                    <div className="space-y-2">
+                                        <Label>Video Title</Label>
+                                        <Input
+                                            value={video.title}
+                                            onChange={(e) => updateVideoToModuleField(idx, "title", e.target.value)}
+                                            placeholder="Video title"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Video File</Label>
+                                        <Input
+                                            type="file"
+                                            accept="video/*"
+                                            onChange={(e) => updateVideoToModuleField(idx, "file", e.target.files?.[0])}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Description (Optional)</Label>
+                                    <Textarea
+                                        value={video.description}
+                                        onChange={(e) => updateVideoToModuleField(idx, "description", e.target.value)}
+                                        placeholder="Video description"
+                                        rows={2}
+                                    />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    <DialogFooter>
+                        <Button
+                            variant="outline"
+                            onClick={() => setAddVideoDialog({ open: false, moduleId: null, moduleTitle: "" })}
+                            disabled={isSubmitting}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={handleSubmitVideosToModule}
+                            disabled={isSubmitting || addVideosToModule.length === 0}
+                            className="bg-orange-500 hover:bg-orange-600"
+                        >
+                            {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                            Add Videos
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </>
     )
 }

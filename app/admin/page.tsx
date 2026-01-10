@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { adminAPI } from "@/lib/api"
-import { Users, BookOpen, DollarSign, CheckCircle, TrendingUp } from "lucide-react"
+import { Users, BookOpen, CheckCircle, TrendingUp,IndianRupee } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
@@ -94,7 +94,7 @@ export default function AdminDashboardPage() {
     {
       label: "Total Revenue",
       value: `₹${stats.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-      icon: DollarSign,
+      icon: IndianRupee,
       color: "text-green-600",
       bg: "bg-green-100",
       desc: "Lifetime earnings"
