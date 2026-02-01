@@ -91,7 +91,7 @@ export default function AboutPage() {
       </div>
 
       {/* Stats Section */}
-      <div className="container px-4 md:px-6 -mt-16 relative z-20">
+      <div className="container mx-auto px-4 md:px-6 -mt-16 relative z-20">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-8">
           {stats.map((stat) => (
             <div key={stat.label} className="bg-white rounded-2xl p-6 lg:p-8 shadow-xl shadow-slate-200/50 border border-gray-100 text-center hover:-translate-y-1 transition-transform duration-300">
@@ -107,7 +107,7 @@ export default function AboutPage() {
 
       {/* Story Section */}
       <section className="py-20 lg:py-32">
-        <div className="container px-4 md:px-6">
+        <div className="container mx-auto px-4 md:px-6">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <div className="order-2 lg:order-1 space-y-8">
               <div className="inline-block rounded-full bg-orange-100 px-4 py-1.5 text-sm font-semibold text-orange-600">
@@ -157,7 +157,7 @@ export default function AboutPage() {
       {/* Team Section */}
       <section className="py-20 lg:py-32 bg-white relative">
         <div className="absolute inset-0 bg-slate-50/50 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] pointer-events-none"></div>
-        <div className="container px-4 md:px-6 relative z-10">
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16 lg:mb-24">
             <span className="inline-block rounded-full bg-purple-100 px-4 py-1.5 text-sm font-semibold text-purple-600 mb-6">
               Our Team
@@ -198,7 +198,7 @@ export default function AboutPage() {
           <div className="absolute top-[20%] -right-[20%] w-[800px] h-[800px] rounded-full bg-teal-500/20 blur-3xl"></div>
         </div>
 
-        <div className="container px-4 md:px-6 relative z-10">
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
           <div className="max-w-4xl mx-auto text-center space-y-8">
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-tight">
               Ready to Start Your Learning Journey?

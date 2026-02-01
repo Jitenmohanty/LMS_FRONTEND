@@ -98,7 +98,7 @@ export default function ContactPage() {
         </div>
       </div>
 
-      <main className="container px-4 sm:px-6 -mt-16 relative z-20 pb-20">
+      <main className="container mx-auto px-4 sm:px-6 -mt-16 relative z-20 pb-20">
         {/* Contact Cards */}
         <div className="grid lg:grid-cols-3 gap-6 mb-12">
           {contactInfo.map((info) => (
